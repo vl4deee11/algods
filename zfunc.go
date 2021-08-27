@@ -1,22 +1,23 @@
 package zfunc
 
-import "fmt"
+import (
+	"reflect"
+	"testing"
+)
 
-func main() {
-	fmt.Println(zf("abacab", 0))
-	// {0,0,1,0,2,1}
-	fmt.Println(zf("aaaaa", 0))
-	// {0,4,3,2,1}
-}
-
+// zf - z function algo with O(N)
+// link to docs - https://neerc.ifmo.ru/wiki/index.php?title=Z-%D1%84%D1%83%D0%BD%D0%BA%D1%86%D0%B8%D1%8F
 func zf(s string, zv int) []int {
+	if len(s) == 0 {
+		return []int{}
+	}
 	li := 0
 	ri := 0
 	z := make([]int, len(s))
 	z[0] = zv
 	for i := 1; i < len(s); i++ {
 		if i <= ri {
-			x := ri - i + 1
+			x := ri - i
 			if z[i-li] < x {
 				z[i] = z[i-li]
 			} else {
@@ -26,10 +27,42 @@ func zf(s string, zv int) []int {
 		for i+z[i] < len(s) && s[z[i]] == s[i+z[i]] {
 			z[i]++
 		}
-		if i+z[i]-1 > ri {
-			li = 1
-			ri = i + z[i] - 1
+
+		if i+z[i] > ri {
+			li = i
+			ri = i + z[i]
 		}
 	}
 	return z
+}
+
+func Test_ZF(t *testing.T) {
+	z1 := zf("abacab", 0)
+	z2 := zf("cats$longcatss", 0)
+	z3 := zf("", 0)
+	z4 := zf("a", 0)
+	z5 := zf("aaaaa", 5)
+	if !reflect.DeepEqual(z1, []int{0, 0, 1, 0, 2, 0}) {
+		panic("z1")
+	}
+	if !reflect.DeepEqual(z2, []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0}) {
+		panic("z2")
+	}
+	if !reflect.DeepEqual(z3, []int{}) {
+		panic("z3")
+	}
+	if !reflect.DeepEqual(z4, []int{0}) {
+		panic("z4")
+	}
+	if !reflect.DeepEqual(z5, []int{5, 4, 3, 2, 1}) {
+		panic("z5")
+	}
+}
+
+// Benchmark_ZF   	 1974745	       600.5 ns/op - use raw string
+// Benchmark_ZF   	 1307140	       958.8 ns/op - with string to rune
+func Benchmark_ZF(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		zf("catsssssssssssssssssssssssssssssssss$longcatsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssscats", 0)
+	}
 }
