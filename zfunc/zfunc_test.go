@@ -6,7 +6,7 @@ import (
 )
 
 // zf - z function algo with O(N)
-// link to docs - https://neerc.ifmo.ru/wiki/index.php?title=Z-%D1%84%D1%83%D0%BD%D0%BA%D1%86%D0%B8%D1%8F
+// link to docs - http://e-maxx.ru/algo/z_function
 func zf(s string, zv int) []int {
 	if len(s) == 0 {
 		return []int{}
