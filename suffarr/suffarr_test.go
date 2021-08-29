@@ -21,9 +21,62 @@ type bipair struct {
 	i int
 }
 
-// sarr - suffix array algo with O(N LogN)
+func clear(a []int) {
+	for i := range a {
+		a[i] = 0
+	}
+}
+
+func radixSort(a []spair) {
+	n := len(a)
+	cnt := make([]int, n)
+	pos := make([]int, n)
+	r := make([]spair, n)
+	{
+		// second element in pair
+		for i := range a {
+			cnt[a[i].p.j]++
+		}
+
+		for i := 1; i < n; i++ {
+			pos[i] = pos[i-1] + cnt[i-1]
+		}
+
+		for _, sp := range a {
+			x := sp.p.j
+			r[pos[x]] = sp
+			pos[x]++
+		}
+		copy(a, r)
+	}
+
+	{
+		// first element in pair
+		clear(cnt)
+		for i := range a {
+			cnt[a[i].p.i]++
+		}
+
+		for i := range r {
+			r[i] = spair{}
+		}
+		clear(pos)
+		for i := 1; i < n; i++ {
+			pos[i] = pos[i-1] + cnt[i-1]
+		}
+
+		for _, sp := range a {
+			x := sp.p.i
+			r[pos[x]] = sp
+			pos[x]++
+		}
+		copy(a, r)
+	}
+}
+
+// suffixArr - suffix array algo with O(NLogN)
 // link to docs - http://e-maxx.ru/algo/suffix_array
-func sarr(s string) []int {
+func suffixArr(s string) []int {
 	n := len(s)
 	p := make([]int, n) // res
 	c := make([]int, n) // class equivalent
@@ -57,9 +110,9 @@ func sarr(s string) []int {
 	// 1 << k == 2**k
 	for (1 << k) < n {
 		// k -> k + 1
-		a := make([]*spair, n)
+		a := make([]spair, n)
 		for i := 0; i < n; i++ {
-			a[i] = &spair{
+			a[i] = spair{
 				p: iipair{
 					i: c[i],
 					j: c[(i+(1<<k))%n],
@@ -67,17 +120,7 @@ func sarr(s string) []int {
 				s: i,
 			}
 		}
-		sort.Slice(a, func(i, j int) bool {
-			if a[i].p.i != a[j].p.i {
-				return a[i].p.i < a[j].p.i
-			}
-
-			if a[i].p.j != a[j].p.j {
-				return a[i].p.j < a[j].p.j
-			}
-
-			return a[i].s < a[j].s
-		})
+		radixSort(a)
 
 		for i := 0; i < n; i++ {
 			p[i] = a[i].s
@@ -102,22 +145,22 @@ func sarr(s string) []int {
 	return p
 }
 
-func Test_SARR(t *testing.T) {
+func Test_SuffixArr(t *testing.T) {
 	// $ - spec divisor
 	s := "ababba$"
-	sa1 := sarr(s)
+	sa1 := suffixArr(s)
 	if !reflect.DeepEqual(sa1, []int{6, 5, 0, 2, 4, 1, 3}) {
 		panic("sa1")
 	}
 
 	s2 := "aaaaa$"
-	sa2 := sarr(s2)
+	sa2 := suffixArr(s2)
 	if !reflect.DeepEqual(sa2, []int{5, 4, 3, 2, 1, 0}) {
 		panic("sa2")
 	}
 
 	s3 := "ppppplppp$"
-	sa3 := sarr(s3)
+	sa3 := suffixArr(s3)
 	if !reflect.DeepEqual(sa3, []int{9, 5, 8, 4, 7, 3, 6, 2, 1, 0}) {
 		panic("sa3")
 	}
