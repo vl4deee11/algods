@@ -1,12 +1,14 @@
 package graph
 
+import "fmt"
+
 var t = 0
 var enterTime []int
 var minTime []int
 var u []bool
 var g map[int][]int
 
-func dfs(v int, p int) {
+func dfsC(v int, p int) {
 	u[v] = true
 	t++
 	enterTime[v] = t
@@ -23,7 +25,7 @@ func dfs(v int, p int) {
 				minTime[v] = enterTime[nv]
 			}
 		} else {
-			dfs(nv, v)
+			dfsC(nv, v)
 			if minTime[nv] < minTime[v] {
 				minTime[v] = minTime[nv]
 			}
@@ -41,7 +43,6 @@ func dfs(v int, p int) {
 	}
 }
 
-
 // findCutPoint - find cutpoint in graph
 // link to docs - https://e-maxx.ru/algo/cutpoints
 func findCutPoint(n int, connections [][]int) {
@@ -57,5 +58,5 @@ func findCutPoint(n int, connections [][]int) {
 	for i := 0; i < n; i++ {
 		u[i] = false
 	}
-	dfs(0, -1)
+	dfsC(0, -1)
 }

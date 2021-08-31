@@ -5,13 +5,13 @@ import (
 	"testing"
 )
 
-var t = 0
-var enterTime []int
-var minTime []int
-var u []bool
-var g map[int][]int
+//var t = 0
+//var enterTime []int
+//var minTime []int
+//var u []bool
+//var g map[int][]int
 
-func dfs(v int, p int) {
+func dfsB(v int, p int) {
 	u[v] = true
 	t++
 	enterTime[v] = t
@@ -27,7 +27,7 @@ func dfs(v int, p int) {
 				minTime[v] = enterTime[nv]
 			}
 		} else {
-			dfs(nv, v)
+			dfsB(nv, v)
 			if minTime[nv] < minTime[v] {
 				minTime[v] = minTime[nv]
 			}
@@ -58,7 +58,7 @@ func findBridges(n int, connections [][]int) {
 	}
 	for i := 0; i < n; i++ {
 		if !u[i] {
-			dfs(i, -1)
+			dfsB(i, -1)
 		}
 	}
 }
