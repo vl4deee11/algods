@@ -13,10 +13,10 @@ func Test_IntSet(t *testing.T) {
 		s[i] = struct{}{}
 	}
 	if _, ok := s[11]; !ok {
-		panic("key 11 is not present")
+		t.Error("key 11 is not present")
 	}
 
 	if _, ok := s[50001]; ok {
-		panic("key 50001 is present")
+		t.Error("key 50001 is present")
 	}
 }
