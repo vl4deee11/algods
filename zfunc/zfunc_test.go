@@ -43,26 +43,31 @@ func Test_ZF(t *testing.T) {
 	z4 := zf("a", 0)
 	z5 := zf("aaaaa", 5)
 	if !reflect.DeepEqual(z1, []int{0, 0, 1, 0, 2, 0}) {
-		panic("z1")
+		t.Error("z1")
 	}
 	if !reflect.DeepEqual(z2, []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0}) {
-		panic("z2")
+		t.Error("z2")
 	}
 	if !reflect.DeepEqual(z3, []int{}) {
-		panic("z3")
+		t.Error("z3")
 	}
 	if !reflect.DeepEqual(z4, []int{0}) {
-		panic("z4")
+		t.Error("z4")
 	}
 	if !reflect.DeepEqual(z5, []int{5, 4, 3, 2, 1}) {
-		panic("z5")
+		t.Error("z5")
 	}
 }
 
-// Benchmark_ZF   	 1974745	       600.5 ns/op - use raw string
+var resS []int
+
+// Benchmark_ZF   	 1974745	       598.3 ns/op - use raw string
 // Benchmark_ZF   	 1307140	       958.8 ns/op - with string to rune
 func Benchmark_ZF(b *testing.B) {
+	s := "catsssssssssssssssssssssssssssssssss$longcatsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssscats"
+	var r []int
 	for i := 0; i < b.N; i++ {
-		zf("catsssssssssssssssssssssssssssssssss$longcatsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssscats", 0)
+		r = zf(s, 0)
 	}
+	resS = r
 }
