@@ -5,4 +5,4 @@
   2. use b2s or s2b for converting bytes to string or string to bytes
   3. https://dave.cheney.net/high-performance-go-workshop/dotgo-paris.html#bounds_check_elimination
   4. build with - `go build -gcflags=-m example.go` and check malloc and other
-  5. build with - `go build -gcflags='-l -l -l' example.go` - to make aggressive inlines (alse can use `-l -l` and dont use `-l`)
+  5. build with - `go build -gcflags='-l -l -l' example.go` - to make aggressive inlines (also can use `-l -l` and dont use `-l`)
