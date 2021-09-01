@@ -150,19 +150,19 @@ func Test_SuffixArr(t *testing.T) {
 	s := "ababba$"
 	sa1 := suffixArr(s)
 	if !reflect.DeepEqual(sa1, []int{6, 5, 0, 2, 4, 1, 3}) {
-		panic("sa1")
+		t.Error("sa1")
 	}
 
 	s2 := "aaaaa$"
 	sa2 := suffixArr(s2)
 	if !reflect.DeepEqual(sa2, []int{5, 4, 3, 2, 1, 0}) {
-		panic("sa2")
+		t.Error("sa2")
 	}
 
 	s3 := "ppppplppp$"
 	sa3 := suffixArr(s3)
 	if !reflect.DeepEqual(sa3, []int{9, 5, 8, 4, 7, 3, 6, 2, 1, 0}) {
-		panic("sa3")
+		t.Error("sa3")
 	}
 
 }
