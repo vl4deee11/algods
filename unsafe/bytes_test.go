@@ -54,13 +54,13 @@ func Test_B2S(t *testing.T) {
 	s := "ABCDEffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffsdaewwqre324567890-=-0987654321`23435678907870--9=-"
 	by := []byte(s)
 	if s != b2s(by) {
-		panic("s != b2s(s)")
+		t.Error("s != b2s(s)")
 	}
 }
 
 func Test_S2B(t *testing.T) {
 	s := "ABCDEffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffsdaewwqre324567890-=-0987654321`23435678907870--9=-"
 	if string(s2b(s)) != s {
-		panic("s2b(s) != []byte(s)")
+		t.Error("s2b(s) != []byte(s)")
 	}
 }
