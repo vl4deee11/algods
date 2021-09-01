@@ -1,4 +1,4 @@
-package unsafe
+package ubytes
 
 import (
 	"reflect"
@@ -23,22 +23,31 @@ func s2b(s string) (b []byte) {
 	return b
 }
 
-//Benchmark_B2S 1000000000          0.3140 ns/op - b2s
-//Benchmark string([]byte{...}) 17811870 57.49 ns/op
+var resS string
+var resB []byte
+
+//Benchmark_B2S 	1000000000	         0.8335 ns/op - b2s
+//Benchmark string([]byte{...}) 	17811870	        57.49 ns/op
 func Benchmark_B2S(b *testing.B) {
 	by := []byte("ABCDEffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffsdaewwqre324567890-=-0987654321`23435678907870--9=-")
+	r := ""
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = b2s(by)
+		r = b2s(by)
 	}
+	resS = r
 }
 
-//Benchmark_S2B 1000000000          0.5691 ns/op
-//Benchmark []byte(...) 16965518 61.76 ns/op
+//Benchmark_S2B   	1000000000	         2.006 ns/op
+//Benchmark []byte(...) 	16965518	        61.76 ns/op
 func Benchmark_S2B(b *testing.B) {
 	s := "ABCDEffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffsdaewwqre324567890-=-0987654321`23435678907870--9=-"
+	var r []byte
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = s2b(s)
+		r = s2b(s)
 	}
+	resB = r
 }
 
 func Test_B2S(t *testing.T) {
