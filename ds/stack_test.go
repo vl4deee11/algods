@@ -1,8 +1,12 @@
 package ds
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+	"unsafe"
+)
 
-// -1 as spec var
+// !!!! -1 as special variable use for empty stack
 type stack interface {
 	push(int)
 	top() int
@@ -58,7 +62,9 @@ func (s *stackOnSlice) pop() int {
 	if r == -1 {
 		return r
 	}
-	s.m = s.m[:len(s.m)-1]
+	m := (*reflect.SliceHeader)(unsafe.Pointer(&s.m))
+	m.Len--
+	// or can use it -> s.m = s.m[:len(s.m)-1]
 	return r
 }
 
