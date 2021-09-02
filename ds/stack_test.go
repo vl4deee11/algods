@@ -78,10 +78,7 @@ func (s *stackOn2Llist) push(e int) {
 		return
 	}
 
-	s.m.nx = &n{
-		e:  e,
-		pv: s.m,
-	}
+	s.m.nx = &n{e: e, pv: s.m}
 	s.m = s.m.nx
 }
 
@@ -110,7 +107,6 @@ func (s *stackOn2Llist) pop() int {
 //Benchmark_StackOnSlice_Pop       1000000                 8.31 ns/op            0 B/op          0 allocs/op
 //Benchmark_StackOn2LList_Pop      1000000                 6.32 ns/op            0 B/op          0 allocs/op
 
-
 func Benchmark_StackOnMap_Push(b *testing.B) {
 	s := &stackOnMap{m: map[int]int{}, t: -1}
 	for i := 0; i < b.N; i++ {
@@ -119,14 +115,14 @@ func Benchmark_StackOnMap_Push(b *testing.B) {
 }
 
 func Benchmark_StackOnSlice_Push(b *testing.B) {
-	s := &stackOnSlice{m: []int{}}
+	s := new(stackOnSlice)
 	for i := 0; i < b.N; i++ {
 		s.push(i)
 	}
 }
 
 func Benchmark_StackOn2LList_Push(b *testing.B) {
-	s := &stackOn2Llist{m: new(n)}
+	s := new(stackOn2Llist)
 	for i := 0; i < b.N; i++ {
 		s.push(i)
 	}
@@ -151,7 +147,7 @@ func Benchmark_StackOnMap_Pop(b *testing.B) {
 
 func Benchmark_StackOnSlice_Pop(b *testing.B) {
 	b.StopTimer()
-	s := &stackOnSlice{m: []int{}}
+	s := new(stackOnSlice)
 	r2 := 0
 	for i := 0; i < b.N; i++ {
 		s.push(i)
@@ -166,7 +162,7 @@ func Benchmark_StackOnSlice_Pop(b *testing.B) {
 
 func Benchmark_StackOn2LList_Pop(b *testing.B) {
 	b.StopTimer()
-	s := &stackOn2Llist{m: new(n)}
+	s := new(stackOn2Llist)
 	r2 := 0
 	for i := 0; i < b.N; i++ {
 		s.push(i)
@@ -185,12 +181,12 @@ func Test_StackOnMap(t *testing.T) {
 }
 
 func Test_StackOnSlice(t *testing.T) {
-	s := &stackOnSlice{m: []int{}}
+	s := new(stackOnSlice)
 	testStack(s, t)
 }
 
 func Test_StackOn2LList(t *testing.T) {
-	s := &stackOn2Llist{}
+	s := new(stackOn2Llist)
 	testStack(s, t)
 }
 
