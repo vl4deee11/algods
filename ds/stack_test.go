@@ -102,13 +102,14 @@ func (s *stackOn2Llist) pop() int {
 	return r
 }
 
-// go test -bench *name* --gcflags='-l -N' --benchmem -cpu=1 -benchtime=10s
-//Benchmark_StackOnMap_Push       55554171               275 ns/op             101 B/op          0 allocs/op
-//Benchmark_StackOnSlice_Push     1000000000             101 ns/op              45 B/op          0 allocs/op
-//Benchmark_StackOn2LList_Push    100592656              183 ns/op              32 B/op          1 allocs/op
-//Benchmark_StackOnMap_Pop        89926910               226 ns/op               0 B/op          0 allocs/op
-//Benchmark_StackOnSlice_Pop      1000000000              24.3 ns/op             0 B/op          0 allocs/op
-//Benchmark_StackOn2LList_Pop     555723915              125 ns/op               0 B/op          0 allocs/op
+// go test -bench=. -gcflags '-l -N' -benchmem -cpu=1 -benchtime=1000000x
+//Benchmark_StackOnMap_Push        1000000               209 ns/op              87 B/op          0 allocs/op
+//Benchmark_StackOnSlice_Push      1000000                18.6 ns/op            45 B/op          0 allocs/op
+//Benchmark_StackOn2LList_Push     1000000               106 ns/op              32 B/op          1 allocs/op
+//Benchmark_StackOnMap_Pop         1000000               108 ns/op               0 B/op          0 allocs/op
+//Benchmark_StackOnSlice_Pop       1000000                 8.31 ns/op            0 B/op          0 allocs/op
+//Benchmark_StackOn2LList_Pop      1000000                 6.32 ns/op            0 B/op          0 allocs/op
+
 
 func Benchmark_StackOnMap_Push(b *testing.B) {
 	s := &stackOnMap{m: map[int]int{}, t: -1}
