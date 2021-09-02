@@ -128,7 +128,7 @@ func Benchmark_StackOn2LList_Push(b *testing.B) {
 	}
 }
 
-var r int
+var Res int
 
 func Benchmark_StackOnMap_Pop(b *testing.B) {
 	b.StopTimer()
@@ -142,7 +142,7 @@ func Benchmark_StackOnMap_Pop(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		r2 = s.pop()
 	}
-	r = r2
+	Res = r2
 }
 
 func Benchmark_StackOnSlice_Pop(b *testing.B) {
@@ -157,7 +157,7 @@ func Benchmark_StackOnSlice_Pop(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		r2 = s.pop()
 	}
-	r = r2
+	Res = r2
 }
 
 func Benchmark_StackOn2LList_Pop(b *testing.B) {
@@ -172,7 +172,7 @@ func Benchmark_StackOn2LList_Pop(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		r2 = s.pop()
 	}
-	r = r2
+	Res = r2
 }
 
 func Test_StackOnMap(t *testing.T) {
