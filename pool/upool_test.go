@@ -2,55 +2,113 @@ package pool
 
 import (
 	"fmt"
+	"sync/atomic"
 	"testing"
 	"unsafe"
 )
 
 type PoolI interface {
 	Get() interface{}
-	Return(interface{})
+	Return(*interface{})
 }
 
 type UnsafePool struct {
-	New     func() interface{}
-	sz, ptr uintptr
+	New      func() interface{}
+	sz       uintptr
+	ptrs     []uintptr
+	freeIdxs []int
 }
 
-func NewUnsafePool(new func() interface{}) PoolI {
+func NewUnsafePool(new func() interface{}) *UnsafePool {
 	p := &UnsafePool{
-		New: new,
-		sz:  0,
-		ptr: 0,
+		New:      new,
+		sz:       0,
+		ptrs:     make([]uintptr, 0),
+		freeIdxs: make([]int, 0),
 	}
 	return p
 }
 
-func (p *UnsafePool) Get() interface{} {
+func (p *UnsafePool) uintptr2EmptyI(ptr uintptr) *interface{} {
+	return (*interface{})(unsafe.Pointer(ptr))
+}
+
+func (p *UnsafePool) emptyI2uintptr(ei *interface{}) uintptr {
+	return uintptr((unsafe.Pointer)(ei))
+}
+
+func (p *UnsafePool) Get() *interface{} {
 	var st interface{}
-	if p.sz == 0 {
+	if len(p.ptrs) == 0 {
 		st = p.New()
 		p.sz = unsafe.Sizeof(st)
-		p.ptr = uintptr(unsafe.Pointer(&st))
+		p.ptrs = append(p.ptrs, p.emptyI2uintptr(&st))
 	} else {
-
+		if len(p.freeIdxs) != 0 {
+			i := p.freeIdxs[len(p.freeIdxs)-1]
+			p.freeIdxs = p.freeIdxs[:len(p.freeIdxs)-1]
+			intr := p.uintptr2EmptyI(p.ptrs[i])
+			return intr
+		} else {
+			nextPtr := p.ptrs[len(p.ptrs)-1] + p.sz
+			st = p.New()
+			atomic.StoreUintptr(&nextPtr, p.emptyI2uintptr(&st))
+			p.ptrs = append(p.ptrs, nextPtr)
+			intr := p.uintptr2EmptyI(nextPtr)
+			return intr
+		}
 	}
-	return *(*interface{})(unsafe.Pointer(p.ptr))
+	return &st
 }
 
-func (p *UnsafePool) Return(interface{}) {
-
+func (p *UnsafePool) Return(st *interface{}) {
+	ptr := p.emptyI2uintptr(st)
+	for i := range p.ptrs {
+		if p.ptrs[i] == ptr {
+			p.freeIdxs = append(p.freeIdxs, i)
+		}
+	}
 }
+
+var x int
 
 func Benchmark_PoolGet(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	f := func() interface{} {
+		return Test{}
 	}
+	p := NewUnsafePool(f)
+	for j := 0; j < b.N; j++ {
+		res := p.Get()
+		resV := (*res).(Test)
+		//fmt.Println(resV)
+		resV.A = 123
+		resV.b = "dsgfdfgdfsag"
+		//fmt.Println(resV)
+		p.Return(res)
+	}
+}
+
+type Test struct {
+	A int
+	b string
+	C float64
+	B []byte
 }
 
 func Test_Pool(t *testing.T) {
 	f := func() interface{} {
-		return 123
+		return Test{}
 	}
 	p := NewUnsafePool(f)
-	res := p.Get().(int)
-	fmt.Println(res)
+	res := p.Get()
+	resV := (*res).(Test)
+	fmt.Println(resV)
+	resV.A = 123
+	resV.b = "dsgfdfgdfsag"
+	fmt.Println(resV)
+	p.Return(res)
+	res = p.Get()
+	resV = (*res).(Test)
+	fmt.Println(resV)
+	//i++
 }
