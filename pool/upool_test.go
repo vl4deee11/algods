@@ -1,7 +1,6 @@
 package pool
 
 import (
-	"fmt"
 	"math/rand"
 	"sync/atomic"
 	"testing"
@@ -9,19 +8,16 @@ import (
 	"unsafe"
 )
 
-type PoolI interface {
-	Get() interface{}
-	Return(*interface{})
-}
 
+// TODO: use code generation like c++ template class
 type UnsafePool struct {
-	New      func() interface{}
+	New      func() *Test
 	sz       uintptr
 	ptrs     []uintptr
 	freeIdxs []int
 }
 
-func NewUnsafePool(new func() interface{}) *UnsafePool {
+func NewUnsafePool(new func() *Test) *UnsafePool {
 	p := &UnsafePool{
 		New:      new,
 		sz:       0,
@@ -31,19 +27,19 @@ func NewUnsafePool(new func() interface{}) *UnsafePool {
 	return p
 }
 
-func (p *UnsafePool) uintptr2EmptyI(ptr uintptr) interface{} {
-	return (*interface{})(unsafe.Pointer(ptr))
+func (p *UnsafePool) uintptr2EmptyI(ptr uintptr) *Test {
+	return (*Test)(unsafe.Pointer(ptr))
 }
 
-func (p *UnsafePool) emptyI2uintptr(ei interface{}) uintptr {
-	return uintptr(unsafe.Pointer(ei.(*unsafe.ArbitraryType)))
+func (p *UnsafePool) emptyI2uintptr(ei *Test) uintptr {
+	return uintptr(unsafe.Pointer(ei))
 }
 
-func (p *UnsafePool) Get() interface{} {
-	var st interface{}
+func (p *UnsafePool) Get() *Test {
+	var st *Test
 	if len(p.ptrs) == 0 {
 		st = p.New()
-		p.sz = unsafe.Sizeof(st)
+		p.sz = unsafe.Sizeof(*st)
 		p.ptrs = append(p.ptrs, p.emptyI2uintptr(st))
 	} else {
 		if len(p.freeIdxs) != 0 {
@@ -61,7 +57,7 @@ func (p *UnsafePool) Get() interface{} {
 	return st
 }
 
-func (p *UnsafePool) Return(st interface{}) {
+func (p *UnsafePool) Return(st *Test) {
 	ptr := p.emptyI2uintptr(st)
 	for i := range p.ptrs {
 		if p.ptrs[i] == ptr {
@@ -73,19 +69,19 @@ func (p *UnsafePool) Return(st interface{}) {
 var x int
 
 func Benchmark_PoolGet(b *testing.B) {
-	f := func() interface{} {
-		return Test{}
-	}
-	p := NewUnsafePool(f)
-	for j := 0; j < b.N; j++ {
-		res := p.Get()
-		resV := (res).(*Test)
-		//fmt.Println(resV)
-		resV.A = 123
-		resV.b = "dsgfdfgdfsag"
-		//fmt.Println(resV)
-		p.Return(res)
-	}
+	//f := func() interface{} {
+	//	return Test{}
+	//}
+	//p := NewUnsafePool(f)
+	//for j := 0; j < b.N; j++ {
+	//	res := p.Get()
+	//	resV := (res).(*Test)
+	//	//fmt.Println(resV)
+	//	resV.A = 123
+	//	resV.b = "dsgfdfgdfsag"
+	//	//fmt.Println(resV)
+	//	p.Return(res)
+	//}
 }
 
 type Test struct {
@@ -98,10 +94,12 @@ type Test struct {
 	B []byte
 }
 
+
+// GOGC=off test with this
 func Test_Pool(t *testing.T) {
-	f := func() interface{} {
+	f := func() *Test {
 		te:=Test{}
-		te.A = rand.Intn(500000 - 123 + 1) + 123
+		te.A = 12
 		te.b = "dsgfdfgdfsag"
 		return &te
 	}
@@ -109,16 +107,20 @@ func Test_Pool(t *testing.T) {
 	p := NewUnsafePool(f)
 	for i:=0;i<1000000000;i++ {
 		res := p.Get()
-		resV := (res).(*Test)
-		fmt.Println(resV)
+		if res == nil {
+			//fmt.Println("NILLLLLLLLLLL")
+		}
+		//fmt.Println("RES=",res)
+		resV := res
+		//fmt.Println(resV)
 		resV.A = rand.Intn(500000 - 123 + 1) + 123
-		resV.b = "dsgfdfgdfsag"
+		resV.b = "123"
 		v := resV
 		tx := v
 		if tx.A > rand.Intn(500000 - 123 + 1) + 123 {
-			fmt.Println("YES")
+			//fmt.Println("YES")
 		}
-		fmt.Println(resV)
+		//fmt.Println(resV)
 		//runtime.KeepAlive(&resV)
 		p.Return(res)
 	}
