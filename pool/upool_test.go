@@ -1,140 +1,127 @@
 package pool
 
 import (
-	"math/rand"
-	"reflect"
 	"testing"
-	"time"
 	"unsafe"
 )
 
 // TODO: use code generation like c++ template class
-type UnsafePool struct {
-	New func() *Test
-	//sz       uintptr
-	//lastptr  uintptr
-	//ptrs     map[uintptr]struct{}
-	freeptrs []uintptr
+const maxInChunks = 10
+const size = int(unsafe.Sizeof(Test{}))
+
+type UPool struct {
+	New        func() Test
+	currChunk  int
+	currOffset int
+	freeptrs   []uintptr
+	memChunks  [][maxInChunks * size]byte
 }
 
-func NewUnsafePool(new func() *Test) *UnsafePool {
-	return &UnsafePool{
-		New: new,
-		//ptrs:     make(map[uintptr]struct{}),
-		freeptrs: make([]uintptr, 0),
+func NewUPool(new func() Test, pSize int) *UPool {
+	return &UPool{
+		New:       new,
+		memChunks: make([][maxInChunks * size]byte, 0, pSize),
+		freeptrs:  make([]uintptr, 0, pSize),
 	}
 }
 
-func (p *UnsafePool) noescape(up unsafe.Pointer) unsafe.Pointer {
+// noescape: unused now
+func (p *UPool) noescape(up unsafe.Pointer) unsafe.Pointer {
 	return unsafe.Pointer(uintptr(up) ^ 0)
 }
 
-func (p *UnsafePool) uintptr2t(ptr uintptr) *Test {
+// uintptr2t: uintptr to type convert
+func (p *UPool) uintptr2t(ptr uintptr) *Test {
 	return (*Test)(unsafe.Pointer(ptr))
 }
 
-func (p *UnsafePool) t2uintptr(v *Test) uintptr {
+// t2uintptr: type to uintptr convert
+func (p *UPool) t2uintptr(v *Test) uintptr {
 	return uintptr(unsafe.Pointer(v))
 }
 
-func (p *UnsafePool) Get() *Test {
-	var st *Test
-	if len(p.freeptrs) == 0 {
-		return p.uintptr2t(uintptr(p.noescape(unsafe.Pointer(p.New()))))
-	} else {
-		ptr := p.freeptrs[len(p.freeptrs)-1]
-		sh := (*reflect.SliceHeader)(unsafe.Pointer(&p.freeptrs))
-		sh.Len--
-		// or you can use -> p.freeptrs = p.freeptrs[:len(p.freeptrs)-1]
-		st = p.uintptr2t(ptr)
-	}
-	return st
+// malloc: allocate new memory chunk
+func (p *UPool) malloc() {
+	p.memChunks = append(p.memChunks, [maxInChunks * size]byte{})
 }
 
-//func (p *UnsafePool) _Get() *Test {
-// var st *Test
-// if len(p.freeptrs) == 0 {
-//  st = p.New()
-//  //p.sz = unsafe.Sizeof(*st)
-//  //ptr := p.t2uintptr(st)
-//  //p.ptrs[ptr] = struct{}{}
-//  //p.lastptr = ptr
-// } else {
-//  if len(p.freeptrs) != 0 {
-//   ptr := p.freeptrs[len(p.freeptrs)-1]
-//   p.freeptrs = p.freeptrs[:len(p.freeptrs)-1]
-//   st = p.uintptr2t(ptr)
-//  } else {
-//   //nextPtr := unsafe.Add(unsafe.Pointer(p.lastptr), p.sz)
-//   //fmt.Println(uintptr(nextPtr))
-//   st = p.New()
-//   //p.write2unsafePointer(st, nextPtr)
-//   //next := uintptr(unsafe.Pointer(st))
-//   //fmt.Println(next)
-//   //p.ptrs[next] = struct{}{}
-//   //p.lastptr = next
-//   //st = p.uintptr2t(next)
-//   fmt.Println(st)
-//  }
-// }
-// return st
-//}
+func (p *UPool) Get() *Test {
+	if len(p.freeptrs) != 0 {
+		ptr := p.freeptrs[len(p.freeptrs)-1]
+		p.freeptrs = p.freeptrs[:len(p.freeptrs)-1]
+		return p.uintptr2t(ptr)
+	}
 
-func (p *UnsafePool) Return(st *Test) {
+	st := p.New()
+	if len(p.memChunks) == 0 {
+		p.malloc()
+	}
+
+	if p.currOffset == len(p.memChunks[p.currChunk]) {
+		p.malloc()
+		p.currOffset = 0
+		p.currChunk++
+	}
+
+	ptr := unsafe.Pointer(&st)
+
+	bs := *(*[size]byte)(ptr)
+	for i := range bs {
+		p.memChunks[p.currChunk][p.currOffset+i] = bs[i]
+	}
+	p.currOffset += size
+	return (*Test)(unsafe.Pointer(&p.memChunks[p.currChunk][p.currOffset-size]))
+}
+
+func (p *UPool) Return(st *Test) {
 	p.freeptrs = append(p.freeptrs, p.t2uintptr(st))
 }
 
 var x *Test
 
+//go test -bench=. -gcflags '-l -N' -benchmem -cpu=1
 //goos: linux
 //goarch: amd64
-//Benchmark_PoolGetOnly              10000           3267820 ns/op         2240008 B/op      20000 allocs/op
-//Benchmark_PoolGetReturn            10000           1977241 ns/op         1120046 B/op      10000 allocs/op
+//Benchmark_PoolGetOnly           10000000               759.1 ns/op           627 B/op          1 allocs/op
+//Benchmark_PoolGetReturn         10000000                12.23 ns/op            0 B/op          0 allocs/op
 func Benchmark_PoolGetOnly(b *testing.B) {
-	f := func() *Test {
+	f := func() Test {
 		te := Test{}
 		te.A = 123
 		te.b = "NOTUSED"
-		return &te
+		te.B = []byte{1, 2, 3, 4}
+		return te
 	}
-	var res = make([]*Test, b.N)
-	p := NewUnsafePool(f)
+
+	var v *Test
+	p := NewUPool(f, 1000)
 	for j := 0; j < b.N; j++ {
-		for i := 0; i < b.N; i++ {
-			res[i] = p.Get()
-		}
-		for i := 0; i < b.N; i++ {
-			res[i] = p.Get()
-		}
+		v = p.Get()
 	}
-	x = res[rand.Int()%len(res)]
+	x = v
 }
 
 func Benchmark_PoolGetReturn(b *testing.B) {
-	f := func() *Test {
+	f := func() Test {
 		te := Test{}
 		te.A = 123
 		te.b = "NOTUSED"
-		return &te
+		te.B = []byte{1, 2, 3, 4}
+		return te
 	}
-	var res = make([]*Test, b.N)
-	p := NewUnsafePool(f)
+
+	var v *Test
+	p := NewUPool(f, 1000)
 	for _i := 0; _i < b.N; _i++ {
-		for i := 0; i < b.N; i++ {
-			res[i] = p.Get()
-		}
-		for i := 0; i < b.N; i++ {
-			p.Return(res[i])
-		}
-		for i := 0; i < b.N; i++ {
-			res[i] = p.Get()
-		}
+		v = p.Get()
+		p.Return(v)
 	}
-	x = res[rand.Int()%len(res)]
+	x = v
 }
 
 type Test struct {
 	b  string
+	bx string
 	A  int8
 	b2 string
 	b3 string
@@ -145,43 +132,22 @@ type Test struct {
 
 // GOGC=off test with this
 func Test_Pool(t *testing.T) {
-	f := func() *Test {
+	f := func() Test {
 		te := Test{}
 		te.A = 123
 		te.b = "NOTUSED"
-		return &te
+		te.B = []byte{1, 2, 3, 4}
+		return te
 	}
-	rand.Seed(time.Now().UnixNano())
-	p := NewUnsafePool(f)
-	for i := 0; i < 1000000000; i++ {
+
+	p := NewUPool(f, 10)
+	var objects []*Test
+	for i := 0; i < 10000; i++ {
 		res := p.Get()
-		if res == nil {
-			//fmt.Println("NILLLLLLLLLLL")
-		}
-		//fmt.Println("RES=",res)
 		resV := res
-		//fmt.Println(resV)
-		resV.A = 123
-		resV.b = "USED"
-		v := resV
-		tx := v
-		_ = tx
-		//if tx.A > rand.Intn(500000-123+1)+123 {
-		// //fmt.Println("YES")
-		//}
-		//if len(resV.B) < 51 {
-		// for z := 0; z < 2048; z++ {
-		//  resV.B = append(resV.B, byte(z))
-		// }
-		//}
-		//fmt.Println(resV)
-		//runtime.KeepAlive(&resV)
-		if i == 1 {
-			//p.Return(resV)
+		objects = append(objects, resV)
+		if i%2 == 0 {
+			p.Return(objects[i])
 		}
 	}
-	//res = p.Get()
-	//resV = (*res).(Test)
-	//fmt.Println(resV)
-	//i++
 }

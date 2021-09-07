@@ -1,9 +1,7 @@
 package ds
 
 import (
-	"reflect"
 	"testing"
-	"unsafe"
 )
 
 // !!!! -1 as special variable use for empty stack
@@ -62,9 +60,7 @@ func (s *stackOnSlice) pop() int {
 	if r == -1 {
 		return r
 	}
-	m := (*reflect.SliceHeader)(unsafe.Pointer(&s.m))
-	m.Len--
-	// or can use it -> s.m = s.m[:len(s.m)-1]
+	s.m = s.m[:len(s.m)-1]
 	return r
 }
 
