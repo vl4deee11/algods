@@ -40,7 +40,6 @@ func dfsB(v int, p int) {
 	}
 }
 
-
 // findBridges - find bridges in graph
 // link to docs - https://e-maxx.ru/algo/bridge_searching
 func findBridges(n int, connections [][]int) {
@@ -62,7 +61,6 @@ func findBridges(n int, connections [][]int) {
 		}
 	}
 }
-
 
 func Test_FindBridges(t *testing.T) {
 	findBridges(5, [][]int{{1, 0}, {2, 0}, {3, 2}, {4, 2}, {4, 3}, {3, 0}, {4, 0}})

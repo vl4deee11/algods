@@ -8,8 +8,8 @@ import (
 type node struct {
 	next *node
 	prev *node
-	key int
-	val int
+	key  int
+	val  int
 }
 
 func printQueue(queue *node) {
@@ -37,7 +37,7 @@ func LruCached(f func(int) int, cacheSize int) func(int) int {
 	cacheMap := make(map[int]*node)
 
 	decorated := func(arg int) int {
-		if val, ok := cacheMap[arg] ; ok {
+		if val, ok := cacheMap[arg]; ok {
 			// updating queue to set arg as most recently used
 			// if it's first element we don't need to extract and pushFront
 			if val.prev == nil {
@@ -57,8 +57,8 @@ func LruCached(f func(int) int, cacheSize int) func(int) int {
 		newNode := &node{
 			next: nil,
 			prev: nil,
-			key: arg,
-			val: f(arg),
+			key:  arg,
+			val:  f(arg),
 		}
 		cacheMap[arg] = newNode
 
