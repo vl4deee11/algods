@@ -16,7 +16,7 @@ func TestAllCacheHits(t *testing.T) {
 	}
 	f := func(arg int) int {
 		hitMap[arg]++
-		return arg * 2 + 1
+		return arg*2 + 1
 	}
 	decorated := AllCached(f)
 	for i := 0; i < numTries; i++ {
@@ -36,7 +36,7 @@ func TestAllCacheValue(t *testing.T) {
 	maxArg := 100
 	numTries := 10000
 	f := func(arg int) int {
-		return arg * 2 + 1
+		return arg*2 + 1
 	}
 	for i := 0; i < maxArg; i++ {
 		resultMap[i] = f(i)
@@ -57,10 +57,10 @@ func TestAllDecoratorIndependence(t *testing.T) {
 	numTries := 10000
 
 	f := func(arg int) int {
-		return arg * 2 + 1
+		return arg*2 + 1
 	}
 	g := func(arg int) int {
-		return arg * arg * 3 - 20
+		return arg*arg*3 - 20
 	}
 	decoratedF := AllCached(f)
 	decoratedG := AllCached(g)

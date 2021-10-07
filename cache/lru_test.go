@@ -6,13 +6,12 @@ import (
 	"time"
 )
 
-
 func testLruCacheHits(t *testing.T, caseSlice []int, estimatedHits int, cacheSize int) {
 	// simple case
 	callCount := 0
 	f := func(arg int) int {
 		callCount++
-		return arg * 2 + 1
+		return arg*2 + 1
 	}
 	decorated := LruCached(f, cacheSize)
 	for _, c := range caseSlice {
@@ -49,7 +48,7 @@ func TestLruCacheValue(t *testing.T) {
 	maxArg := 100
 	numTries := 100000
 	f := func(arg int) int {
-		return arg * 2 + 1
+		return arg*2 + 1
 	}
 	for i := 0; i < maxArg; i++ {
 		resultMap[i] = f(i)
@@ -70,10 +69,10 @@ func TestLruDecoratorIndependence(t *testing.T) {
 	numTries := 10000
 
 	f := func(arg int) int {
-		return arg * 2 + 1
+		return arg*2 + 1
 	}
 	g := func(arg int) int {
-		return arg * arg * 3 - 20
+		return arg*arg*3 - 20
 	}
 	decoratedF := LruCached(f, 5)
 	decoratedG := LruCached(g, 3)

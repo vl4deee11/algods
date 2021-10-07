@@ -5,8 +5,18 @@ import (
 	"unsafe"
 )
 
-// TODO: use code generation like c++ template class
-const maxInChunks = 10
+type Test struct {
+	b  string
+	bx string
+	A  int8
+	b2 string
+	b3 string
+	b4 string
+	C  float64
+	B  []byte
+}
+
+const maxInChunks = 100
 const size = int(unsafe.Sizeof(Test{}))
 
 type UPool struct {
@@ -45,6 +55,7 @@ func (p *UPool) malloc() {
 	p.memChunks = append(p.memChunks, [maxInChunks * size]byte{})
 }
 
+// Get struct from pool
 func (p *UPool) Get() *Test {
 	if len(p.freeptrs) != 0 {
 		ptr := p.freeptrs[len(p.freeptrs)-1]
@@ -73,17 +84,18 @@ func (p *UPool) Get() *Test {
 	return (*Test)(unsafe.Pointer(&p.memChunks[p.currChunk][p.currOffset-size]))
 }
 
+// Return struct to pool
 func (p *UPool) Return(st *Test) {
 	p.freeptrs = append(p.freeptrs, p.t2uintptr(st))
 }
 
 var x *Test
 
-//go test -bench=. -gcflags '-l -N' -benchmem -cpu=1
-//goos: linux
-//goarch: amd64
-//Benchmark_PoolGetOnly           10000000               759.1 ns/op           627 B/op          1 allocs/op
-//Benchmark_PoolGetReturn         10000000                12.23 ns/op            0 B/op          0 allocs/op
+// go test -bench=. -gcflags '-l -N' -benchmem -cpu=1
+// goos: linux
+// goarch: amd64
+// Benchmark_PoolGetOnly           10000000               759.1 ns/op           627 B/op          1 allocs/op
+// Benchmark_PoolGetReturn         10000000                12.23 ns/op            0 B/op          0 allocs/op
 func Benchmark_PoolGetOnly(b *testing.B) {
 	f := func() Test {
 		te := Test{}
@@ -119,18 +131,6 @@ func Benchmark_PoolGetReturn(b *testing.B) {
 	x = v
 }
 
-type Test struct {
-	b  string
-	bx string
-	A  int8
-	b2 string
-	b3 string
-	b4 string
-	C  float64
-	B  []byte
-}
-
-// GOGC=off test with this
 func Test_Pool(t *testing.T) {
 	f := func() Test {
 		te := Test{}
