@@ -8,4 +8,5 @@
   5. build with - `go build -gcflags='-l -l -l' example.go` - to make aggressive inlines (also can use `-l -l` and dont use `-l`)
 
 # more
-+ add bit set
++ add algo Mo*
++ add ds treap
