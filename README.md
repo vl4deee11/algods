@@ -8,5 +8,5 @@
   5. build with - `go build -gcflags='-l -l -l' example.go` - to make aggressive inlines (also can use `-l -l` and dont use `-l`)
 
 # more
-+ add algo Mo*
-+ add ds treap
++ add algo Mo (https://www.geeksforgeeks.org/mos-algorithm-query-square-root-decomposition-set-1-introduction/)
++ add ds treap (https://e-maxx.ru/algo/treap)
