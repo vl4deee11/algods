@@ -23,6 +23,25 @@ func s2b(s string) (b []byte) {
 	return b
 }
 
+// bit vector to uint64
+func bitVec2UInt64(v []uint8) uint64 {
+	e := len(v) - 1
+	if e > 63 {
+		return 0
+	}
+
+	var b uint64 = 0
+	for i := range v {
+		if v[i] == 1 {
+			b |= 1
+		}
+		if i != e {
+			b <<= 1
+		}
+	}
+	return b
+}
+
 var resS string
 var resB []byte
 
