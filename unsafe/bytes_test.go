@@ -23,6 +23,18 @@ func s2b(s string) (b []byte) {
 	return b
 }
 
+// uint64 to bit vector
+func uInt642bitVec(b uint64) []uint8 {
+	v := make([]uint8, 64)
+	i := len(v) - 1
+	for b != 0 {
+		v[i] = uint8(b & 1)
+		b >>= 1
+		i--
+	}
+	return v
+}
+
 // bit vector to uint64
 func bitVec2UInt64(v []uint8) uint64 {
 	e := len(v) - 1
@@ -81,5 +93,20 @@ func Test_S2B(t *testing.T) {
 	s := "ABCDEffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffsdaewwqre324567890-=-0987654321`23435678907870--9=-"
 	if string(s2b(s)) != s {
 		t.Error("s2b(s) != []byte(s)")
+	}
+}
+
+func Test_IntToVecAndRollback(t *testing.T) {
+	var i uint64 = 0
+	for i = 0; i < 1<<24; i++ {
+		r := bitVec2UInt64(uInt642bitVec(i))
+		if r != i {
+			t.Errorf("test: %d != %d", r, i)
+		}
+	}
+
+	r := bitVec2UInt64(uInt642bitVec(1 << 63))
+	if r != uint64(1<<63) {
+		t.Errorf("test: %d != %d", r, uint64(1<<63))
 	}
 }
