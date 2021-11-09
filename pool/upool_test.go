@@ -1,5 +1,6 @@
 package pool
 
+// main pkg https://github.com/vl4deee11/upool
 import (
 	"testing"
 	"unsafe"
@@ -17,7 +18,7 @@ type Test struct {
 }
 
 const maxInChunks = 100
-const size = int(unsafe.Sizeof(Test{}))
+const size = int(unsafe.Sizeof(new(Test)))
 
 type UPool struct {
 	New        func() Test
@@ -62,20 +63,16 @@ func (p *UPool) Get() *Test {
 		p.freeptrs = p.freeptrs[:len(p.freeptrs)-1]
 		return p.uintptr2t(ptr)
 	}
-
 	st := p.New()
 	if len(p.memChunks) == 0 {
 		p.malloc()
 	}
-
 	if p.currOffset == len(p.memChunks[p.currChunk]) {
 		p.malloc()
 		p.currOffset = 0
 		p.currChunk++
 	}
-
 	ptr := unsafe.Pointer(&st)
-
 	bs := *(*[size]byte)(ptr)
 	for i := range bs {
 		p.memChunks[p.currChunk][p.currOffset+i] = bs[i]
@@ -84,7 +81,7 @@ func (p *UPool) Get() *Test {
 	return (*Test)(unsafe.Pointer(&p.memChunks[p.currChunk][p.currOffset-size]))
 }
 
-// Return struct to pool
+//Return struct to pool
 func (p *UPool) Return(st *Test) {
 	p.freeptrs = append(p.freeptrs, p.t2uintptr(st))
 }
