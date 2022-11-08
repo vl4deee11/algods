@@ -43,6 +43,46 @@ func Union(e1, e2 *Node) {
 	}
 }
 
+type Node_rec struct {
+	parent *Node_rec
+	rank   int
+	data   int
+}
+
+func New(data int) *Node_rec {
+	s := &Node_rec{}
+	s.parent = s
+	s.data = data
+	return s
+}
+
+func Find(e *Node_rec) *Node_rec {
+	if e.parent == e {
+		return e
+	}
+	e.parent = Find(e.parent)
+	return e.parent
+}
+
+func Union(e1, e2 *Node_rec) bool {
+	r1 := Find(e1)
+	r2 := Find(e2)
+	if r1 == r2 {
+		return false
+	}
+
+	switch {
+	case r1.rank < r2.rank:
+		r1.parent = r2
+	case r1.rank > r2.rank:
+		r2.parent = r1
+	default:
+		r2.parent = r1
+		r1.rank++
+	}
+	return true
+}
+
 func TestEvenOdd(t *testing.T) {
 	const N = 1000
 	sets := make([]*Node, N)
