@@ -56,17 +56,17 @@ func New(data int) *Node_rec {
 	return s
 }
 
-func Find(e *Node_rec) *Node_rec {
+func Find_r(e *Node_rec) *Node_rec {
 	if e.parent == e {
 		return e
 	}
-	e.parent = Find(e.parent)
+	e.parent = Find_r(e.parent)
 	return e.parent
 }
 
-func Union(e1, e2 *Node_rec) bool {
-	r1 := Find(e1)
-	r2 := Find(e2)
+func Union_r(e1, e2 *Node_rec) bool {
+	r1 := Find_r(e1)
+	r2 := Find_r(e2)
 	if r1 == r2 {
 		return false
 	}
