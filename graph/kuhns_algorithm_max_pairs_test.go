@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// dfs: Пытается каждый раз увеличить число пар в паросочетании, true - если получилось создать новую пару
 func dfs(used []bool, matched []int, gr map[int][]int, v int) bool {
 	if used[v] {
 		return false
