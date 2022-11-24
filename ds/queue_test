@@ -1,0 +1,70 @@
+package ds
+
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
+
+type queue struct {
+	first *node
+	last  *node
+}
+
+type node struct {
+	next *node
+	data interface{}
+}
+
+func newQueue() *queue {
+	return new(queue)
+}
+
+func (eq *queue) Enqueue(e interface{}) {
+	if eq.last != nil {
+		eq.last.next = new(node)
+		eq.last.next.data = e
+		eq.last = eq.last.next
+		return
+	}
+
+	ln := &node{data: e}
+	eq.last = ln
+	eq.first = ln
+}
+
+func (eq *queue) Dequeue() (e interface{}) {
+	if eq.first == nil {
+		return nil
+	}
+	v := eq.first
+	eq.first = eq.first.next
+	if eq.first == nil {
+		eq.last = nil
+	}
+	return v.data
+}
+
+func TestQueue(t *testing.T) {
+	q := newQueue()
+	v := q.Dequeue()
+	assert.Nil(t, v)
+
+	event1 := "e1"
+	event2 := "e2"
+	event3 := "e3"
+
+	q.Enqueue(event1)
+	q.Enqueue(event2)
+	q.Enqueue(event3)
+	assert.Equal(t, q.Dequeue(), event1)
+	assert.Equal(t, q.Dequeue(), event2)
+	assert.Equal(t, q.Dequeue(), event3)
+
+	q.Enqueue(event1)
+	q.Enqueue(event3)
+	assert.Equal(t, q.Dequeue(), event1)
+	q.Enqueue(event2)
+	assert.Equal(t, q.Dequeue(), event3)
+	assert.Equal(t, q.Dequeue(), event2)
+
+}
