@@ -8,6 +8,8 @@ import (
 )
 
 type node struct {
+	// p родитель узла
+	p *node
 	// l левый ребенок узла
 	l *node
 	// r правый ребенок узла
@@ -72,8 +74,10 @@ func buildTree(h *MinHeap) *node {
 	var l, r *node
 	for h.Len() > 1 {
 		l, r = heap.Pop(h).(*node), heap.Pop(h).(*node)
-
-		heap.Push(h, &node{l: l, r: r, c: l.c + r.c})
+		p := &node{l: l, r: r, c: l.c + r.c}
+		l.p = p
+		r.p = p
+		heap.Push(h, p)
 	}
 
 	return (*h)[0]
