@@ -4,6 +4,7 @@ import (
 	"container/heap"
 	"fmt"
 	"testing"
+	"unsafe"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -42,6 +43,24 @@ func (n *node) code() (uint64, byte) {
 	return r, bits
 }
 
+// decode: Декодирует строку из битов
+func decode(de string, r *node) string {
+	res := make([]byte, 0)
+	cp := r
+	for i := range de {
+		if de[i] == '0' {
+			cp = cp.l
+		} else {
+			cp = cp.r
+		}
+		if cp.b != 0 {
+			res = append(res, cp.b)
+			cp = r
+		}
+	}
+	return *(*string)(unsafe.Pointer(&res))
+}
+
 // Куча для построения дерева Хаффмана
 type MinHeap []*node
 
@@ -66,7 +85,7 @@ func (h *MinHeap) Pop() interface{} {
 //	                     (c: 10)
 //	(c:4, b: 'a')                         (c:6)
 //	                       (c:3, b: 'c')                  (c:3)
-//	                                         (c:2, b: 'd')     (c:1, b: 'b')
+//	                                         (c:1, b: 'd')     (c:2, b: 'b')
 func Build(str string) (*node, map[byte]*node) {
 	// Считаем частоты в строке
 	hm := make(map[byte]int)
@@ -128,4 +147,6 @@ func TestHuffmanCodeTree(t *testing.T) {
 	r, _ = b2n['d'].code()
 	assert.Equal(t, fmt.Sprintf("%b", r), "110")
 
+	assert.Equal(t, decode("0000111111101010110", tr), "aaaabbcccd")
+	assert.Equal(t, decode("1100", tr), "da")
 }

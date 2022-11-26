@@ -71,7 +71,7 @@ func Add(arr []int, cnt *[]int, k int, res *int) {
 	(*cnt)[arr[k]]++
 }
 
-// Add: удаляем arr[k] с текущего отрезка
+// Del: удаляем arr[k] с текущего отрезка
 func Del(arr []int, cnt *[]int, k int, res *int) {
 	//  Или другая операция
 	(*cnt)[arr[k]]--
