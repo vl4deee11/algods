@@ -2,6 +2,8 @@ package tree
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // Декартово дерево или диамида (англ. treap) — это структура данных,
@@ -69,7 +71,7 @@ func merge(root **treapNode, l, r *treapNode) {
 		// Кладем в корень тот узел, где выше приоритет (не нарушим кучу по Y)
 		*root = l
 
-		// зная, что по условию бин дерева в l.l все ключи <= ключу в корне
+		// Зная, что по условию бин дерева в l.l все ключи <= ключу в корне
 		// И по условию пирамиды все приоритеты в l.l <= приоритету в корне l => левая часть root уже правильная
 		// и надо достроить только правую часть и именно поэтому мы идем в правый узел root -> так же переключаем в правый узел l
 		merge(&(*root).r, l.r, r)
@@ -77,7 +79,7 @@ func merge(root **treapNode, l, r *treapNode) {
 		// Кладем в корень тот узел, где выше приоритет (не нарушим кучу по Y)
 		*root = r
 
-		// зная, что по условию бин дерева в r.r все ключи >= ключу в корне
+		// Зная, что по условию бин дерева в r.r все ключи >= ключу в корне
 		// И по условию пирамиды все приоритеты в r.r <= приоритету в корне r => правая часть root уже правильная
 		// и надо достроить только левую часть и именно поэтому мы идем в левый узел root -> так же переключаем в левый узел r
 		merge(&(*root).l, l, r.l)
@@ -99,7 +101,9 @@ func insert(root **treapNode, it *treapNode) {
 	if it.prior > (*root).prior {
 
 		// Здесь вызов означает вызов функции: "разделите treap root по значению it.key
-		// на два treap и сохраните левые treap it.l и правый treap it.r"
+		// на два treap и сохраните левые treap it.l и правый treap it.r",
+		// Разделив по ключу it.key => мы поддерживаем свойства бинарного дерева по it.key
+		// и свойства бинарной кучи по it.prior
 		split(*root, &it.l, &it.r, it.key)
 		*root = it
 	} else {
@@ -130,6 +134,7 @@ func erase(root **treapNode, key int) {
 }
 
 func TestTreap(t *testing.T) {
+	// a
 	r := &treapNode{key: 5, prior: 5}
 	b := &treapNode{key: 7, prior: 40}
 	c := &treapNode{key: 8, prior: 3}
@@ -139,6 +144,32 @@ func TestTreap(t *testing.T) {
 	insert(&r, b)
 	insert(&r, c)
 	insert(&r, d)
+
+	// d
+	assert.Equal(t, r.prior, 300)
+	assert.Equal(t, r.key, 8)
+	// b
+	assert.Equal(t, r.l.key, 7)
+	assert.Equal(t, r.l.prior, 40)
+	// c
+	assert.Equal(t, r.l.r.key, 8)
+	assert.Equal(t, r.l.r.prior, 3)
+	// a
+	assert.Equal(t, r.l.l.key, 5)
+	assert.Equal(t, r.l.l.prior, 5)
+
 	erase(&r, 7)
+	// d
+	assert.Equal(t, r.prior, 300)
+	assert.Equal(t, r.key, 8)
+	// a
+	assert.Equal(t, r.l.key, 5)
+	assert.Equal(t, r.l.prior, 5)
+	// c
+	assert.Equal(t, r.l.r.key, 8)
+	assert.Equal(t, r.l.r.prior, 3)
 	insert(&r, e)
+	// e
+	assert.Equal(t, r.prior, 301)
+	assert.Equal(t, r.key, 1)
 }
