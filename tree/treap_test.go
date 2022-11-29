@@ -94,7 +94,7 @@ func merge(root **treapNode, l, r *treapNode) {
 // Теперь вызываем Split (X) от найденного элемента (от элемента вместе со всем его поддеревом),
 // и возвращаемые ею L и R записываем в качестве левого и правого сына добавляемого элемента.
 func insert(root **treapNode, it *treapNode) {
-	if root == nil || *root == nil {
+	if *root == nil {
 		*root = it
 		return
 	}
@@ -133,6 +133,44 @@ func erase(root **treapNode, key int) {
 	}
 }
 
+// unite - за O(M log (N/M))
+// Реализация Unite (X, Y).
+// Пусть, не теряя общности, T1->Y > T2->Y, т.е. корень T1 будет корнем результата.
+// Чтобы получить результат, нам нужно объединить деревья T1->L, T1->R и T2
+// в два таких дерева, чтобы их можно было сделать сыновьями T1.
+// Для этого вызовем Split (T2, T1->X), тем самым мы разобъём T2 на две половинки L и R,
+// которые затем рекурсивно объединим с сыновьями T1: Union (T1->L, L) и Union (T1->R, R),
+// тем самым мы построим левое и правое поддеревья результата.
+func unite(l, r *treapNode) *treapNode {
+	if l == nil || r == nil {
+		if l == nil {
+			return r
+		}
+		return l
+	}
+
+	if l.prior < r.prior {
+		l, r = r, l
+	}
+	// r -> меньший приоритет
+	// l -> больший приоритет
+	// Мы возьмем l, а r мы поделим по ключу и дополним l данными из r,
+	// а затем мы построим левое и правое поддеревья результата
+	lroot := &treapNode{}
+	rroot := &treapNode{}
+	// Делим с меньшим приоритетом поддерево по ключу корня l (с наибольшим приоритетом)
+	split(r, &lroot, &rroot, l.key)
+	// Дополняем l.l данными из разделения
+	l.l = unite(l.l, lroot)
+	// Дополняем l.r данными из разделения
+	l.r = unite(l.r, rroot)
+	return l
+}
+
+func swap(l, r *treapNode) (*treapNode, *treapNode) {
+	return r, l
+}
+
 func TestTreap(t *testing.T) {
 	// a
 	r := &treapNode{key: 5, prior: 5}
@@ -140,6 +178,14 @@ func TestTreap(t *testing.T) {
 	c := &treapNode{key: 8, prior: 3}
 	d := &treapNode{key: 8, prior: 300}
 	e := &treapNode{key: 1, prior: 301}
+
+	x := unite(r, b)
+	// b
+	assert.Equal(t, x.prior, 40)
+	assert.Equal(t, x.key, 7)
+	// a
+	assert.Equal(t, x.l.prior, 5)
+	assert.Equal(t, x.l.key, 5)
 
 	insert(&r, b)
 	insert(&r, c)
