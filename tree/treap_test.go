@@ -39,14 +39,14 @@ func split(root *treapNode, l, r **treapNode, x int) {
 		// И дальше рекурсивно идем в лево, при этом левый указатель оставляем как есть,
 		// а правый указатель заменяем на r.l, так как все <= чем root.key, но больше чем x, должно быть в левом поддереве r
 		// а правое поддерево root будет без изменений
-		split(root.l, l, &(root).l, x)
+		split(root.l, l, &root.l, x)
 		// Подвешиваем корень за правое дерево
 		*r = root
 	} else {
 		// И дальше рекурсивно идем в право, при этом правый указатель оставляем как есть,
 		// а левый указатель заменяем на l.r, так как все >= чем root.key, но меньше чем x, должно быть в правом поддереве l
 		// а левое поддерево root будет без изменений
-		split(root.r, &(root).r, r, x)
+		split(root.r, &root.r, r, x)
 		// Подвешиваем корень за левое дерево
 		*l = root
 	}
@@ -165,10 +165,6 @@ func unite(l, r *treapNode) *treapNode {
 	// Дополняем l.r данными из разделения
 	l.r = unite(l.r, rroot)
 	return l
-}
-
-func swap(l, r *treapNode) (*treapNode, *treapNode) {
-	return r, l
 }
 
 func TestTreap(t *testing.T) {
