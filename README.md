@@ -10,3 +10,5 @@
 # more
 + add ds AVL tree 
 + add ds fenwick tree https://e-maxx.ru/algo/fenwick_tree
++ add algo prim http://e-maxx.ru/algo/mst_prim
++ add algo kruskal http://e-maxx.ru/algo/mst_kruskal_with_dsu
