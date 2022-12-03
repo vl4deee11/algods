@@ -22,28 +22,27 @@ import (
 // Ключевой момент - что мы не обращаем внимание на эти переполнения, как бы беря хэш по модулю 2^64.
 func rabinKarp(t, s string) []int {
 	// Тут работает только с алфавитом на маленьких, латинских буквах
-	var p int64 = 31
+	var p uint64 = 31
 	// Массив степеней p
-	pPow := make([]int64, max(len(s), len(t)))
+	pPow := make([]uint64, max(len(s), len(t)))
 	pPow[0] = 1
 	for i := 1; i < len(pPow); i++ {
 		pPow[i] = pPow[i-1] * p
 	}
 
 	// Считаем хэши от всех префиксов строки T по функции h(S)
-	h := make([]int64, len(t))
+	h := make([]uint64, len(t))
 	for i := 0; i < len(t); i++ {
-
-		h[i] = (int64(t[i]) - 'a' + 1) * pPow[i]
+		h[i] = (uint64(t[i]) - 'a' + 1) * pPow[i]
 		if i > 0 {
 			h[i] += h[i-1]
 		}
 	}
 
 	// Считаем хэш от строки S по функции h(S)
-	var hashS int64 = 0
+	var hashS uint64 = 0
 	for i := 0; i < len(s); i++ {
-		hashS += (int64(s[i]) - 'a' + 1) * pPow[i]
+		hashS += (uint64(s[i]) - 'a' + 1) * pPow[i]
 	}
 
 	res := make([]int, 0)
