@@ -121,7 +121,7 @@ func TestSegmentTree1(t *testing.T) {
 
 	// 1. OpT 0 - n
 	s1 := OpT(tree, 0, 4)
-	assert.Equal(t, s1, 36)
+	assert.Equal(t, s1, 15)
 	// 2. OpT 0 - 0
 	s2 := OpT(tree, 0, 0)
 	assert.Equal(t, s2, 1)
