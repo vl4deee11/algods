@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-// dfs: Пытается каждый раз увеличить число пар в паросочетании, true - если получилось создать новую пару
-func dfs(used []bool, matched []int, gr map[int][]int, v int) bool {
+// dfsKuhns: Пытается каждый раз увеличить число пар в паросочетании, true - если получилось создать новую пару
+func dfsKuhns(used []bool, matched []int, gr map[int][]int, v int) bool {
 	if used[v] {
 		return false
 	}
@@ -20,7 +20,7 @@ func dfs(used []bool, matched []int, gr map[int][]int, v int) bool {
 		// если она занята, то с ней можно соединиться только тогда,
 		// когда из её текущей пары можно найти какую-нибудь другую
 		// вершину для соединения + 1 (соединяем текущую вершину) -> увеличиваем кол-во пар
-		if matched[nx] == -1 || dfs(used, matched, gr, matched[nx]) {
+		if matched[nx] == -1 || dfsKuhns(used, matched, gr, matched[nx]) {
 			matched[nx] = v
 			return true
 		}
@@ -40,7 +40,7 @@ func cntPairs(n int, gr map[int][]int) int {
 		for ui := range used {
 			used[ui] = false
 		}
-		if dfs(used, matched, gr, i) {
+		if dfsKuhns(used, matched, gr, i) {
 			cnt++
 		}
 	}
