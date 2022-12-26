@@ -81,6 +81,9 @@ func (uf *ufmst) union(e1, e2 int) {
 
 func TestKruskalMST(t *testing.T) {
 	// Тестовый пример взял из https://upload.wikimedia.org/wikipedia/commons/0/01/MST_Kruskal.gif
+	// a - 0
+	// b - 1
+	// .... и тд
 	edges := [][3]int{{0, 4, 1}, {0, 1, 3}, {1, 2, 5}, {1, 4, 4}, {2, 3, 2}, {2, 4, 6}, {3, 4, 7}}
 	res := kruskalMST(5, edges)
 	// Сумма весов = 11, можно показать что легче уже не выйдет создать дерева
