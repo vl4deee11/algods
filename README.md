@@ -8,5 +8,3 @@
   4. https://habr.com/ru/company/badoo/blog/301990/
 # more
 + add ds AVL tree 
-+ add algo prim http://e-maxx.ru/algo/mst_prim
-+ add algo kruskal http://e-maxx.ru/algo/mst_kruskal_with_dsu
