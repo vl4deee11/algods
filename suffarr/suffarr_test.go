@@ -75,7 +75,6 @@ func radixSort(a []spair) {
 }
 
 // suffixArr - suffix array algo with O(NLogN)
-// link to docs - http://e-maxx.ru/algo/suffix_array
 func suffixArr(s string) []int {
 	n := len(s)
 	p := make([]int, n) // res
