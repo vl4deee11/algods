@@ -1,4 +1,4 @@
-package math
+package math_x
 
 import (
 	"testing"
@@ -15,7 +15,7 @@ func binpow(a, n int) int {
 		return 1
 	}
 	if n&1 != 0 {
-		return binpow(a, n-1) * n
+		return binpow(a, n-1) * a
 	}
 	x := binpow(a, n/2)
 	return x * x
