@@ -13,7 +13,7 @@ import (
 // кроме самого числа 2, затем делящиеся на 3, кроме самого числа 3, затем на 5, затем на 7, 11,
 // и все остальные простые до n.
 
-// eratosthenesSieve - за  O (N*loglogN)
+// eratosthenesSieve - за  O (NloglogN)
 func eratosthenesSieve(n int) []bool {
 	primes := make([]bool, n+1)
 	for i := range primes {
@@ -33,7 +33,7 @@ func eratosthenesSieve(n int) []bool {
 	return primes
 }
 
-// eratosthenesSieveBitSet - за  O (N*loglogN)
+// eratosthenesSieveBitSet - за  O (NloglogN)
 // Со сжатием битов
 func eratosthenesSieveBitSet(n int) bm_set.SetI {
 	primes := bm_set.New(uint64(n + 1))
