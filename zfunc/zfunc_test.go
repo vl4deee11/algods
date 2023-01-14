@@ -5,8 +5,24 @@ import (
 	"testing"
 )
 
-// zf - z function algo with O(N)
-// link to docs - http://e-maxx.ru/algo/z_function
+// zf - за время O(N)
+//       a b a c a b a
+// z =  [7 0 1 0 3 0 1]
+//       a a a a a
+// z =  [0 4 3 2 1]
+//       a b c d
+// z =  [0 0 0 0]
+//       a c f a c f a c
+// z =  [0 0 0 5 0 0 2 0]
+// pi = 0; pi = 1; pi = 2; pi = 3; pi = 4;
+// ci = 3; ci = 4; ci = 5; ci = 6; ci = 7; = 5
+// z[i] = max совпадение префикса строки и строки начиная с i символа строки
+// s =  c a t s $ l o n g c a t s s
+// z = [0 0 0 0 0 0 0 0 0 4 0 0 0 0]
+//
+// s = car
+// t = my favorite carting
+
 func zf(s string, zv int) []int {
 	if len(s) == 0 {
 		return []int{}
@@ -16,18 +32,25 @@ func zf(s string, zv int) []int {
 	z := make([]int, len(s))
 	z[0] = zv
 	for i := 1; i < len(s); i++ {
+		// Если i попадает в кещ до ri
 		if i <= ri {
+			// х - то сколько мы можем взять из кэша
 			x := ri - i
 			if z[i-li] < x {
+				// Если закешированно меньше чем осталось в кеше
 				z[i] = z[i-li]
 			} else {
+				// Если закешированно больше или равно чем осталось в кеше
 				z[i] = x
 			}
 		}
+
+		// Досчитывание в тупую
 		for i+z[i] < len(s) && s[z[i]] == s[i+z[i]] {
 			z[i]++
 		}
 
+		// Обновление границ, для того что бы следующие i индексы попали в кеш
 		if i+z[i] > ri {
 			li = i
 			ri = i + z[i]
