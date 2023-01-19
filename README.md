@@ -1,5 +1,4 @@
 # algods
-Основные материалы собранные в этом репозитории взяты с сайта [e-maxx.ru](http://e-maxx.ru), переписаны на golang.
 Данный репозиторий служит шпаргалкой на тренировках по CP, а так же неким наглядным пособием для лекций по алгоритмам
 # optimization tricks
   1. https://dave.cheney.net/high-performance-go-workshop/dotgo-paris.html#bounds_check_elimination
