@@ -105,6 +105,7 @@ func maxflow(s, t int, capacity [][]int) int {
 }
 
 func TestMaxFlow(t *testing.T) {
+	// Пример взял от графа https://cp-algorithms.com/graph/Flow1.png
 	S := 0
 	T := 5
 	capa := [][]int{
