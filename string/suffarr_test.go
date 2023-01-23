@@ -1,4 +1,4 @@
-package suffarr
+package string
 
 import (
 	"reflect"
