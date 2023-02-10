@@ -6,8 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//https://ru.algorithmica.org/cs/trees/centroid/
-
 // Центроидная декомпозиция — обобщение метода «разделяй-и-властвуй» на деревья
 //
 // Центроидом дерева (англ. centroid) называется такая вершина v дерева t, после удаления которой
