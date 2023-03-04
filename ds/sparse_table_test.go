@@ -1,7 +1,6 @@
 package ds
 
 import (
-	"fmt"
 	"math"
 	"testing"
 
@@ -64,14 +63,14 @@ func (t sparseTable) query(l, r int, op func(int, int) int) int {
 	//
 	//         L                       R
 	// |----------------------------------------|
-	//     min(|      2^j      |,
-	//                |       2^j      |)
+	//     min(|      2^x      |,
+	//                |       2^x      |)
 	// Или если словами - мы берем два минимума на отрезке от l до l+(1<<x), и на отрезке от r-(1<<x) до r
 	// И это и будет наш ответ
 	return op(t[x][l], t[x][r-(1<<x)])
 }
 
-// Разберем на примере, пусть у нас есть массив: [1, 2, 1, 4, 3]
+// Разберем на примере, пусть у нас есть массив: [1, 2, 1, 4, 3, 5, 2, 3, 1]
 // ceil(logn(8)) = 3, считаем минимум на подотрезках длинны [1(k=0), 2(k=1), 4(k=2)]
 // Таблица полученная будет:
 // [1 2 1 4 3 5 2 3 1] = минимумы для длинны 1
@@ -107,6 +106,7 @@ func min(a, b int) int {
 }
 
 func TestSparseTable(t *testing.T) {
+
 	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	tbl := sparseTableBuild(arr, min)
 	assert.Equal(t, 1, tbl.query(0, 6, min))
@@ -119,9 +119,6 @@ func TestSparseTable(t *testing.T) {
 
 	arr = []int{1, 2, 1, 4, 3, 5, 2, 3, 1}
 	tbl = sparseTableBuild(arr, min)
-	for _, r := range tbl {
-		fmt.Println(r)
-	}
 	assert.Equal(t, 1, tbl.query(0, 2, min))
 	assert.Equal(t, 1, tbl.query(1, 3, min))
 
