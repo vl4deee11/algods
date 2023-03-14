@@ -9,6 +9,9 @@ import (
 var stdinR = bufio.NewReader(os.Stdin)
 var stdoutW = bufio.NewWriter(os.Stdout)
 
+// Если нужно много писать
+// var stdoutW = bufio.NewWriterSize(os.Stdout, 1<<30)
+
 func printf(f string, a ...interface{}) { fmt.Fprintf(stdoutW, f, a...) }
 func print(a ...interface{})            { fmt.Fprint(stdoutW, a...) }
 func println(a ...interface{})          { fmt.Fprintln(stdoutW, a...) }
