@@ -1,5 +1,9 @@
 package base
 
+import (
+	"bufio"
+)
+
 func max(x, y int) int {
 	if x > y {
 		return x
@@ -32,13 +36,26 @@ func chazToI026(x byte) int {
 }
 
 func chAZToI026(x byte) int {
-	return int(x - 122)
+	return int(x - 65)
 }
 
-func I026ToChaz(x int) byte {
+func i026ToChaz(x int) byte {
 	return byte(x + 97)
 }
 
-func I026ToChAZ(x int) byte {
-	return byte(x + 122)
+func i026ToChAZ(x int) byte {
+	return byte(x + 65)
+}
+
+func isLet(b byte) bool {
+	return (97 <= b && b <= 122) || (65 <= b && b <= 90)
+}
+
+func isN(b byte) bool {
+	return 48 <= b && b <= 57
+}
+
+func readFullLine(r *bufio.Reader) string {
+	l, _ := r.ReadString('\n')
+	return l[:len(l)-1]
 }
