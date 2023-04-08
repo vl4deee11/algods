@@ -142,3 +142,7 @@ func dist(p1 [2]int, p2 [2]int) float64 {
 func mod(a, b int) int {
 	return (a%b + b) % b
 }
+
+func chess(b string) [2]int {
+	return [2]int{7 - ((int(b[0]) - 48) - 1), 7 - (int(b[1]) - 97)}
+}
