@@ -2,6 +2,7 @@ package base
 
 import (
 	"bufio"
+	"math"
 )
 
 type ii int
@@ -109,4 +110,35 @@ func isN(b byte) bool {
 func readFullLine(r *bufio.Reader) string {
 	l, _ := r.ReadString('\n')
 	return l[:len(l)-1]
+}
+
+func bytes2Int64(v []byte) int64 {
+	if len(v) == 0 {
+		return 0
+	}
+	if (len(v) == 8 && v[0] > 127) || len(v) > 8 {
+		return 0
+	}
+	var b int64
+	for i := 0; i < len(v); i++ {
+		b |= int64(v[i])
+		if b == 0 {
+			b = 1
+		}
+		if len(v)-1 != i {
+			b = b << 8
+		}
+	}
+	if v[0] == 0 {
+		b = b & ((1 << ((len(v) - 1) * 8)) - 1)
+	}
+	return b
+}
+
+func dist(p1 [2]int, p2 [2]int) float64 {
+	return math.Sqrt(math.Pow(float64(p2[0]-p1[0]), 2) + math.Pow(float64(p2[1]-p1[1]), 2))
+}
+
+func mod(a, b int) int {
+	return (a%b + b) % b
 }
