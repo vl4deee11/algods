@@ -70,6 +70,13 @@ func min(x, y int) int {
 	return y
 }
 
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
 func strToI(s string) int {
 	d := int(0)
 	ll := len(s) - 1
@@ -145,4 +152,16 @@ func mod(a, b int) int {
 
 func chess(b string) [2]int {
 	return [2]int{7 - ((int(b[0]) - 48) - 1), 7 - (int(b[1]) - 97)}
+}
+
+func float64Eq(f1, f2 float64) bool {
+	return math.Abs(f1-f2) < 1e-6
+}
+
+func float64GtOrEq(f1, f2 float64) bool {
+	return float64Eq(f1, f2) || f1 > f2
+}
+
+func float64LtOrEq(f1, f2 float64) bool {
+	return float64Eq(f1, f2) || f1 < f2
 }
