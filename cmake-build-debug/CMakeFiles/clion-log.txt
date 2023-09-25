@@ -1,0 +1,4 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/user/go/src/github.com/vl4deee11/algods
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/user/go/src/github.com/vl4deee11/algods/cmake-build-debug

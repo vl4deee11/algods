@@ -1,0 +1,3 @@
+/Users/user/go/src/github.com/vl4deee11/algods/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/user/go/src/github.com/vl4deee11/algods/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/user/go/src/github.com/vl4deee11/algods/cmake-build-debug/CMakeFiles/algods.dir

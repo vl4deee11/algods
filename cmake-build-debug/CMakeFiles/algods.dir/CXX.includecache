@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/user/go/src/github.com/vl4deee11/algods/main.cpp
+iostream
+-
+queue
+-
+vector
+-
+iostream
+-
+cmath
+-
+vector
+-
+map
+-
+
