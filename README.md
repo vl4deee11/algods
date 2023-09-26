@@ -7,7 +7,9 @@
   3. build with - `go build -gcflags='-l -l -l' example.go` - to make aggressive inlines (also can use `-l -l` and dont use `-l`)
   4. https://habr.com/ru/company/badoo/blog/301990/
 # more
-+ add ds AVL tree 
++ add ds AVL tree
++ https://medium.com/cheat-sheets/cheat-sheet-for-competitive-programming-with-c-f2e8156d5aa9
++ https://github.com/helloproclub/competitive-programming-cheat-sheet
 
 # run
 go
