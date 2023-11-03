@@ -13,12 +13,16 @@
 #include <list>
 #include <cassert>
 #include <unordered_map>
+#include <numeric>
+
 using namespace std;
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 
 /* TYPES  */
 #define ll long long
+#define lli int64_t
+#define str string
 #define pii pair<int, int>
 #define pll pair<long long, long long>
 #define vi vector<int>
@@ -31,8 +35,11 @@ using namespace std;
 /* FUNCTIONS */
 #define v(t) vector<t>
 #define s(t) set<t>
-#define m(t,t2) map<t, t2>
+#define m(t, t2) map<t, t2>
+#define um(t, t2) unordered_map<t, t2>
+#define p(t, t2) pair<t, t2>
 #define f(i, s, e) for(long long int i=s;i<e;i++)
+#define fm(i, s, e) for(long long int i=s;i!=e;i++)
 #define cf(i, s, e) for(long long int i=s;i<=e;i++)
 #define rf(i, e, s) for(long long int i=e-1;i>=s;i--)
 #define wl(c) while(c)
@@ -50,7 +57,7 @@ void print_v(vector<T> &v) { cout << "{"; for (auto x : v) cout << x << ","; cou
 #define PI 3.1415926535897932384626433832795
 #define read(type) readInt<type>()
 ll min(ll a,int b) { if (a<b) return a; return b; }
-ll min(int a,ll b) { if (a<b) return a; return b; }
+ll min(int a,lli b) { if (a<b) return a; return b; }
 ll min(ll a,ll b) { if (a<b) return a; return b; }
 ll max(ll a,int b) { if (a>b) return a; return b; }
 ll max(int a,ll b) { if (a>b) return a; return b; }
