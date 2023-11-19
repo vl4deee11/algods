@@ -23,7 +23,13 @@ type treapNode struct {
 // search - за O(log N) в среднем
 func search(root *treapNode, x int) *treapNode {
 	// Ищет элемент с указанным значением ключа x. Реализуется абсолютно так же, как и для обычного бинарного дерева поиска.
-	return nil
+	if root.key == x {
+		return root
+	}
+	if root.key > x {
+		return search(root.l, x)
+	}
+	return search(root.r, x)
 }
 
 // split - за O(log N).
@@ -214,4 +220,5 @@ func TestTreap(t *testing.T) {
 	// e
 	assert.Equal(t, r.prior, 301)
 	assert.Equal(t, r.key, 1)
+
 }
