@@ -16,8 +16,8 @@
 #include <numeric>
 
 using namespace std;
-//#pragma GCC optimize("O3,unroll-loops")
-//#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 
 /* TYPES  */
 #define ll long long
@@ -93,10 +93,73 @@ typedef unsigned long int uint32;
 typedef long long int int64;
 typedef unsigned long long int uint64;
 
-// g++ -std=c++20 -O2 -lm -o x.bin main.cpp && chmod +x ./x.bin | cat i.txt | ./x.bin > o.txt
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
+struct Q {
+    lli L, R, idx;
+};
 
-    return 0;
+int getc(v(lli)& arr) {
+    return sqrt(arr.size()) + 1;
+}
+
+v(v(Q*)) BuildBuckets(v(lli)& arr, v(Q*)& qs) {
+    int c = getc(arr);
+    v(v(Q*)) buckets(c);
+
+    f(i,0,qs.size()){
+        if (qs[i]->L>=arr.size()||qs[i]->L<0) {
+            continue;
+        }
+        if (qs[i]->R>=arr.size()||qs[i]->R<0) {
+            continue;
+        }
+        buckets[qs[i]->L/c].pb(qs[i]);
+    }
+
+    f(i,0,buckets.size()){
+        sort(buckets[i].begin(), buckets[i].end(), [](Q* q1, Q* q2) {
+            return q1->R < q2->R;
+        });
+    }
+
+    return buckets;
+}
+
+void Add(v(lli)& arr, int k, um(lli,lli)& res) {
+    res[arr[k]]++;
+}
+
+void Del(v(lli)& arr, int k, um(lli,lli)& res) {
+    res[arr[k]]--;
+}
+
+v(lli) ProcessQ(v(v(Q*))& buckets, v(lli)& arr, int lq) {
+    int c = getc(arr);
+    v(lli) ans(lq);
+
+    um(lli,lli) fr={};
+    f(i,0,c){
+        int l=i*c;
+        int r=i*c-1;
+        fr={};
+        int res = 0;
+        fa(q,buckets[i]){
+            wl(r<q->R){
+                r++;
+                Add(arr, r, fr);
+            }
+
+            wl(l<q->L){
+                Del(arr, l, fr);
+                l++;
+            }
+
+            wl(l>q->L){
+                l--;
+                Add(arr, l, fr);
+            }
+            ans[q->idx] = 0;
+        }
+    }
+
+    return ans;
 }

@@ -3,3 +3,4 @@
 *.out
 vendor
 algods.iml
+cmake-build-debug
