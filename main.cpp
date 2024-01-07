@@ -16,12 +16,13 @@
 #include <numeric>
 
 using namespace std;
-//#pragma GCC optimize("O3,unroll-loops")
-//#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 
 /* TYPES  */
 #define ll long long
 #define lli int64_t
+#define ulli uint64_t
 #define dbl double
 #define str string
 #define pii pair<int, int>
@@ -44,6 +45,7 @@ using namespace std;
 #define um(t, t2) unordered_map<t, t2>
 #define p(t, t2) pair<t, t2>
 #define f(i, s, e) for(long long int i=s;i<e;i++)
+#define fc(i, s, e, c) for(long long int i=s;i<e;i+=c)
 #define fa(k,in) for(auto k:in)
 #define fm(i, s, e) for(long long int i=s;i!=e;i++)
 #define cf(i, s, e) for(long long int i=s;i<=e;i++)
