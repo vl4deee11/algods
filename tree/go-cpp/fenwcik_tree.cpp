@@ -94,6 +94,47 @@ typedef long long int int64;
 typedef unsigned long long int uint64;
 
 
+// RANGE FT
+class FT {
+private:
+    v(lli) B1, B2;
+    lli N;
+
+    void add(v(lli)& b,lli i,lli x){
+        wl(i<=N){
+            b[i]+=x;
+            i+=i&-i;
+        }
+    }
+
+    lli sum(v(lli)& b,lli i){
+        lli r=0;
+        wl(i>0){
+            r+=b[i];
+            i-=i&-i;
+        }
+        return r;
+    }
+
+public:
+    FT(lli size) : N(size), B1(size+1,0), B2(size+1,0) {}
+
+    void radd(lli l,lli r,lli x) {
+        add(B1, l, x);
+        add(B1, r+1,-x);
+        add(B2, l,x*(l-1));
+        add(B2, r+1,-x*r);
+    }
+
+    lli pfsum(lli idx) {
+        return sum(B1,idx)*idx-sum(B2,idx);
+    }
+    lli rsum(lli l,lli r) {
+        return pfsum(r)-pfsum(l-1);
+    }
+};
+
+// SIMPLE FT
 int fenwickTreeF(int x){return x&(x+1);}
 int fenwickTreeH(int x){return x|(x+1);}
 
