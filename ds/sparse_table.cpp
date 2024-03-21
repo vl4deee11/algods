@@ -15,8 +15,6 @@
 #include <unordered_map>
 #include <numeric>
 #include <iomanip>
-#include <iostream>
-
 
 using namespace std;
 #pragma GCC optimize("O3,unroll-loops")
@@ -101,10 +99,28 @@ typedef unsigned long int uint32;
 typedef long long int int64;
 typedef unsigned long long int uint64;
 
-// g++ -std=c++20 -O2 -lm -o x.bin main.cpp && chmod +x ./x.bin | cat i.txt | ./x.bin > o.txt
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
+// Функция для выполнения запроса на полуинтервале [l; r), за O(1)
+int query(v(v(lli))& t, int l, int r, function<int(int, int)> op) {
+    // Вычисляем значение x, такое что 2^x - самый длинный подотрезок, содержащий полуинтервал [l; r)
+    int x = log2(r - l);
+    // Выбираем один из подотрезков так, чтобы одна его граница была в l, а другая - в r
+    // Для этого вторая граница должна быть (1<<x) шагов назад от r
+    return op(t[x][l], t[x][r - (1 << x)]);
+}
 
-    return 0;
+// Функция для построения разреженной таблицы
+v(v(lli)) sparseTableBuild(v(lli)& arr, function<int(int, int)> op) {
+    int l = arr.size();
+    int logn = log2(l) + 1;
+    v(v(lli)) t(logn, v(lli)(l));
+    t[0] = arr;
+    f(k,logn-1,k){
+        t[k + 1].resize(l);
+        lli i=0;
+        wl((i + (1 << k)) < l){
+            t[k + 1][i] = op(t[k][i], t[k][i + (1 << k)]);
+            ++i;
+        }
+    }
+    return t;
 }
