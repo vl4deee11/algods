@@ -16,5 +16,9 @@ go
 `cat i.txt | go run main.go > o.txt
 `
 
+py
+`cat i.txt | python3 main.py > o.txt
+`
+
 c++
 `g++ -std=c++20 -O2 -lm -o x.bin main.cpp && chmod +x ./x.bin | cat i.txt | ./x.bin > o.txt`

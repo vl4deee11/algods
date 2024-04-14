@@ -97,6 +97,18 @@ struct Q {
     lli L, R, idx;
 };
 
+lli bsize;
+struct QS
+{
+    int l,r,id;
+    bool operator<(const QS& ob) const
+    {
+        if(l/bsize == ob.l/bsize)
+            return r<ob.r;
+        return l/bsize < ob.l/bsize;
+    }
+};
+
 int getc(v(lli)& arr) {
     return sqrt(arr.size()) + 1;
 }
@@ -124,11 +136,11 @@ v(v(Q*)) BuildBuckets(v(lli)& arr, v(Q*)& qs) {
     return buckets;
 }
 
-void Add(v(lli)& arr, int k, um(lli,lli)& res) {
+void Add(v(lli)& arr, int k, m(lli,lli)& res) {
     res[arr[k]]++;
 }
 
-void Del(v(lli)& arr, int k, um(lli,lli)& res) {
+void Del(v(lli)& arr, int k, m(lli,lli)& res) {
     res[arr[k]]--;
 }
 
@@ -136,7 +148,7 @@ v(lli) ProcessQ(v(v(Q*))& buckets, v(lli)& arr, int lq) {
     int c = getc(arr);
     v(lli) ans(lq);
 
-    um(lli,lli) fr={};
+    m(lli,lli) fr={};
     f(i,0,c){
         int l=i*c;
         int r=i*c-1;

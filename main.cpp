@@ -29,7 +29,7 @@ using namespace std;
 #define dbl double
 #define str string
 #define pii pair<int, int>
-#define pll pair<long long, long long>
+#define pll pair<lli, lli>
 #define vi vector<int>
 #define vs vector<string>
 #define vll vector<long long>
@@ -45,8 +45,8 @@ using namespace std;
 #define s(t) set<t>
 #define ms(t) multiset<t>
 #define mipq(t) priority_queue<t,v(t),greater<t>>
+#define mapq(t) priority_queue<t,v(t),less<t>>
 #define trpl(a,b,c) tuple<a,b,c>
-#define mapq(t) priority_queue<t>
 #define m(t, t2) map<t, t2>
 #define um(t, t2) unordered_map<t, t2>
 #define p(t, t2) pair<t, t2>
@@ -103,8 +103,7 @@ typedef unsigned long long int uint64;
 
 // g++ -std=c++20 -O2 -lm -o x.bin main.cpp && chmod +x ./x.bin | cat i.txt | ./x.bin > o.txt
 int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
+    ios_base::sync_with_stdio(0); cin.tie(0);
 
     return 0;
 }
