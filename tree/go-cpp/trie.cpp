@@ -109,9 +109,28 @@ typedef unsigned long int uint32;
 typedef long long int int64;
 typedef unsigned long long int uint64;
 
-// g++ -std=c++20 -O2 -lm -o x.bin main.cpp && chmod +x ./x.bin | cat i.txt | ./x.bin > o.txt
-int main() {
-    ios_base::sync_with_stdio(0); cin.tie(0);
 
-    return 0;
-}
+class N {
+public:
+    um(char,N*)chi;
+    bool end;
+    N(){
+        end=false;
+    }
+};
+
+class Trie {
+public:
+    N *r;
+    Trie(){r=new N();}
+    void ins(str& w){
+        N *n=r;
+        fa(ch,w){
+            if(n->chi.find(ch)==n->chi.end()){
+                n->chi[ch]=new N();
+            }
+            n=n->chi[ch];
+        }
+        n->end=true;
+    }
+};
