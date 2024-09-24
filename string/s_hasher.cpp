@@ -30,8 +30,7 @@ using namespace std;
 #define xf first
 #define xs second
 #define ll long long int
-#define lli int64_t
-#define ulli uint64_t
+#define ull uint64_t
 #define dbl double
 #define ldbl long double
 #define str string
@@ -79,12 +78,8 @@ void print_v(vector<T> &v) { cout << "{"; for (auto x : v) cout << x << ","; cou
 #define MOD 1000000007
 #define PI 3.1415926535897932384626433832795
 #define read(type) readInt<type>()
-//ll min(ll a,int b) { if (a<b) return a; return b; }
-//ll min(int a,ll b) { if (a<b) return a; return b; }
-lli min(lli a,lli b) { if (a<b) return a; return b; }
-//ll max(ll a,int b) { if (a>b) return a; return b; }
-//ll max(int a,ll b) { if (a>b) return a; return b; }
-lli max(lli a,lli b) { if (a>b) return a; return b; }
+ll min(ll a,ll b) { if (a<b) return a; return b; }
+ll max(ll a,ll b) { if (a>b) return a; return b; }
 int chaz_to_int026(char x) {return int(x - 'a');}
 int chAZ_to_int026(char x) {return int(x - 'A');}
 char int026_to_chaz(int x) {return char(x + 'a');}
@@ -110,9 +105,43 @@ typedef unsigned long int uint32;
 typedef long long int int64;
 typedef unsigned long long int uint64;
 
-// g++ -std=c++20 -O2 -lm -o x.bin main.cpp && chmod +x ./x.bin | cat i.txt | ./x.bin > o.txt
-int main() {
-    ios_base::sync_with_stdio(0); cin.tie(0);
 
-    return 0;
-}
+class SH {
+public:
+    str t;
+    ll n;
+    vector<uint64_t> pPow;
+    vector<uint64_t> h;
+
+    SH(str& t):t(t){
+        n=t.length();
+        uint64_t p=163;
+        pPow.resize(n);
+        pPow[0]=1;
+        f(i,1,n){
+            pPow[i]=pPow[i-1]*p;
+        }
+        h.resize(n);
+        f(i,0,n){
+            h[i]=(t[i]-'a'+1)*pPow[i];
+            if(i>0){h[i]+=h[i-1];}
+        }
+    }
+
+    bool cmp(ll i1,ll j1,ll i2,ll j2){
+        if(j1-i1!=j2-i2){
+            return false;
+        }
+        uint64_t h1=gh(i1,j1);
+        uint64_t h2=gh(i2,j2);
+        return h1==h2;
+    }
+
+    uint64_t gh(ll i,ll j){
+        uint64_t hh=h[j];
+        if(i>0){
+            hh-=h[i-1];
+        }
+        return hh*pPow[n-i-1];
+    }
+};

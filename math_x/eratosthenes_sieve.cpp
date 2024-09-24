@@ -14,19 +14,28 @@
 #include <cassert>
 #include <unordered_map>
 #include <numeric>
+#include <iomanip>
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+#include <queue>
+#include <cstdlib>
+#include <cstring>
 
 using namespace std;
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 
 /* TYPES  */
-#define ll long long
-#define lli int64_t
-#define ulli uint64_t
+#define xf first
+#define xs second
+#define ll long long int
+#define ull uint64_t
 #define dbl double
+#define ldbl long double
 #define str string
 #define pii pair<int, int>
-#define pll pair<long long, long long>
+#define pll pair<ll,ll>
 #define vi vector<int>
 #define vs vector<string>
 #define vll vector<long long>
@@ -35,12 +44,17 @@ using namespace std;
 #define sc set<char>
 
 /* FUNCTIONS */
+#define mid(l, r) 	       ((l + r) >> 1)
+#define all(a)             a.begin(),a.end()
 #define v(t) vector<t>
+#define st(t) stack<t>
+#define ar(t,sz) array<t,sz>
 #define s(t) set<t>
+#define ss(a) sort(a.begin(),a.end())
 #define ms(t) multiset<t>
-#define mipq(t) priority_queue<t,v(t),greater<t>>
+#define mipq(t) priority_queue<t>
+#define mapq(t) priority_queue<t,v(t),less<t>>
 #define trpl(a,b,c) tuple<a,b,c>
-#define mapq(t) priority_queue<t>
 #define m(t, t2) map<t, t2>
 #define um(t, t2) unordered_map<t, t2>
 #define p(t, t2) pair<t, t2>
@@ -64,11 +78,7 @@ void print_v(vector<T> &v) { cout << "{"; for (auto x : v) cout << x << ","; cou
 #define MOD 1000000007
 #define PI 3.1415926535897932384626433832795
 #define read(type) readInt<type>()
-//ll min(ll a,int b) { if (a<b) return a; return b; }
-ll min(int a,ll b) { if (a<b) return a; return b; }
 ll min(ll a,ll b) { if (a<b) return a; return b; }
-ll max(ll a,int b) { if (a>b) return a; return b; }
-ll max(int a,ll b) { if (a>b) return a; return b; }
 ll max(ll a,ll b) { if (a>b) return a; return b; }
 int chaz_to_int026(char x) {return int(x - 'a');}
 int chAZ_to_int026(char x) {return int(x - 'A');}
@@ -96,7 +106,8 @@ typedef long long int int64;
 typedef unsigned long long int uint64;
 
 
-v(bool) eratosthenesSieve(lli n) {
+
+v(bool) eratosthenesSieve(ll n) {
     v(bool) primes(n+1,true);
     primes[0]=false;
     primes[1]=false;

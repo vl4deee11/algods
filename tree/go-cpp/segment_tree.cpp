@@ -14,17 +14,28 @@
 #include <cassert>
 #include <unordered_map>
 #include <numeric>
+#include <iomanip>
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+#include <queue>
+#include <cstdlib>
+#include <cstring>
 
 using namespace std;
-//#pragma GCC optimize("O3,unroll-loops")
-//#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 
 /* TYPES  */
-#define ll long long
-#define lli int64_t
+#define xf first
+#define xs second
+#define ll long long int
+#define ull uint64_t
+#define dbl double
+#define ldbl long double
 #define str string
 #define pii pair<int, int>
-#define pll pair<long long, long long>
+#define pll pair<ll,ll>
 #define vi vector<int>
 #define vs vector<string>
 #define vll vector<long long>
@@ -33,12 +44,23 @@ using namespace std;
 #define sc set<char>
 
 /* FUNCTIONS */
+#define mid(l, r) 	       ((l + r) >> 1)
+#define all(a)             a.begin(),a.end()
 #define v(t) vector<t>
+#define st(t) stack<t>
+#define ar(t,sz) array<t,sz>
 #define s(t) set<t>
+#define ss(a) sort(a.begin(),a.end())
+#define ms(t) multiset<t>
+#define mipq(t) priority_queue<t>
+#define mapq(t) priority_queue<t,v(t),less<t>>
+#define trpl(a,b,c) tuple<a,b,c>
 #define m(t, t2) map<t, t2>
 #define um(t, t2) unordered_map<t, t2>
 #define p(t, t2) pair<t, t2>
 #define f(i, s, e) for(long long int i=s;i<e;i++)
+#define fc(i, s, e, c) for(long long int i=s;i<e;i+=c)
+#define fa(k,in) for(auto k:in)
 #define fm(i, s, e) for(long long int i=s;i!=e;i++)
 #define cf(i, s, e) for(long long int i=s;i<=e;i++)
 #define rf(i, e, s) for(long long int i=e-1;i>=s;i--)
@@ -56,11 +78,7 @@ void print_v(vector<T> &v) { cout << "{"; for (auto x : v) cout << x << ","; cou
 #define MOD 1000000007
 #define PI 3.1415926535897932384626433832795
 #define read(type) readInt<type>()
-ll min(ll a,int b) { if (a<b) return a; return b; }
-ll min(int a,lli b) { if (a<b) return a; return b; }
 ll min(ll a,ll b) { if (a<b) return a; return b; }
-ll max(ll a,int b) { if (a>b) return a; return b; }
-ll max(int a,ll b) { if (a>b) return a; return b; }
 ll max(ll a,ll b) { if (a>b) return a; return b; }
 int chaz_to_int026(char x) {return int(x - 'a');}
 int chAZ_to_int026(char x) {return int(x - 'A');}
@@ -89,23 +107,23 @@ typedef unsigned long long int uint64;
 
 class ST {
 public:
-    ST(v(lli)& arr) {
+    ST(v(ll)& arr) {
         arrTree.resize(4 * arr.size());
         buildSegTree(arr, 1, 0, arr.size() - 1);
     }
 
-    lli OpT(int l, int r) {
+    ll OpT(int l, int r) {
         return opT(1, 0, arrTree.size() / 4 - 1, l, r);
     }
 
-    void Upd(int pos, lli newVal) {
+    void Upd(int pos, ll newVal) {
         upd(1, 0, arrTree.size() / 4 - 1, pos, newVal);
     }
 
 private:
-    v(lli) arrTree;
+    v(ll) arrTree;
 
-    void buildSegTree(v(lli)& arr, int v, int tl, int tr) {
+    void buildSegTree(v(ll)& arr, int v, int tl, int tr) {
         if (tl == tr) {
             arrTree[v] = arr[tl];
             return;
@@ -116,7 +134,7 @@ private:
         arrTree[v] = arrTree[2 * v] + arrTree[2 * v + 1];
     }
 
-    lli opT(int v, int tl, int tr, int l, int r) {
+    ll opT(int v, int tl, int tr, int l, int r) {
         if (l > r) {
             return 0;
         }
@@ -128,7 +146,7 @@ private:
                opT(2 * v + 1, tm + 1, tr, std::max(l, tm + 1), r);
     }
 
-    void upd(int v, int tl, int tr, int pos, lli newVal) {
+    void upd(int v, int tl, int tr, int pos, ll newVal) {
         if (tl == tr) {
             arrTree[v] = newVal;
             return;

@@ -30,8 +30,7 @@ using namespace std;
 #define xf first
 #define xs second
 #define ll long long int
-#define lli int64_t
-#define ulli uint64_t
+#define ull uint64_t
 #define dbl double
 #define ldbl long double
 #define str string
@@ -48,6 +47,7 @@ using namespace std;
 #define mid(l, r) 	       ((l + r) >> 1)
 #define all(a)             a.begin(),a.end()
 #define v(t) vector<t>
+#define st(t) stack<t>
 #define ar(t,sz) array<t,sz>
 #define s(t) set<t>
 #define ss(a) sort(a.begin(),a.end())
@@ -78,12 +78,8 @@ void print_v(vector<T> &v) { cout << "{"; for (auto x : v) cout << x << ","; cou
 #define MOD 1000000007
 #define PI 3.1415926535897932384626433832795
 #define read(type) readInt<type>()
-//ll min(ll a,int b) { if (a<b) return a; return b; }
-//ll min(int a,ll b) { if (a<b) return a; return b; }
-lli min(lli a,lli b) { if (a<b) return a; return b; }
-//ll max(ll a,int b) { if (a>b) return a; return b; }
-//ll max(int a,ll b) { if (a>b) return a; return b; }
-lli max(lli a,lli b) { if (a>b) return a; return b; }
+ll min(ll a,ll b) { if (a<b) return a; return b; }
+ll max(ll a,ll b) { if (a>b) return a; return b; }
 int chaz_to_int026(char x) {return int(x - 'a');}
 int chAZ_to_int026(char x) {return int(x - 'A');}
 char int026_to_chaz(int x) {return char(x + 'a');}
@@ -108,7 +104,6 @@ typedef long int int32;
 typedef unsigned long int uint32;
 typedef long long int int64;
 typedef unsigned long long int uint64;
-
 
 class N {
 public:

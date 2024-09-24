@@ -3,5 +3,5 @@
 *.out
 vendor
 algods.iml
-cmake-build-debug
+cmake-build-debug/*
 learn.txt

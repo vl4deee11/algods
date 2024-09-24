@@ -14,19 +14,28 @@
 #include <cassert>
 #include <unordered_map>
 #include <numeric>
+#include <iomanip>
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+#include <queue>
+#include <cstdlib>
+#include <cstring>
 
 using namespace std;
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 
 /* TYPES  */
-#define ll long long
-#define lli int64_t
-#define ulli uint64_t
+#define xf first
+#define xs second
+#define ll long long int
+#define ull uint64_t
 #define dbl double
+#define ldbl long double
 #define str string
 #define pii pair<int, int>
-#define pll pair<long long, long long>
+#define pll pair<ll,ll>
 #define vi vector<int>
 #define vs vector<string>
 #define vll vector<long long>
@@ -35,12 +44,17 @@ using namespace std;
 #define sc set<char>
 
 /* FUNCTIONS */
+#define mid(l, r) 	       ((l + r) >> 1)
+#define all(a)             a.begin(),a.end()
 #define v(t) vector<t>
+#define st(t) stack<t>
+#define ar(t,sz) array<t,sz>
 #define s(t) set<t>
+#define ss(a) sort(a.begin(),a.end())
 #define ms(t) multiset<t>
-#define mipq(t) priority_queue<t,v(t),greater<t>>
+#define mipq(t) priority_queue<t>
+#define mapq(t) priority_queue<t,v(t),less<t>>
 #define trpl(a,b,c) tuple<a,b,c>
-#define mapq(t) priority_queue<t>
 #define m(t, t2) map<t, t2>
 #define um(t, t2) unordered_map<t, t2>
 #define p(t, t2) pair<t, t2>
@@ -64,17 +78,13 @@ void print_v(vector<T> &v) { cout << "{"; for (auto x : v) cout << x << ","; cou
 #define MOD 1000000007
 #define PI 3.1415926535897932384626433832795
 #define read(type) readInt<type>()
-//ll min(ll a,int b) { if (a<b) return a; return b; }
-ll min(int a,ll b) { if (a<b) return a; return b; }
 ll min(ll a,ll b) { if (a<b) return a; return b; }
-ll max(ll a,int b) { if (a>b) return a; return b; }
-ll max(int a,ll b) { if (a>b) return a; return b; }
 ll max(ll a,ll b) { if (a>b) return a; return b; }
 int chaz_to_int026(char x) {return int(x - 'a');}
 int chAZ_to_int026(char x) {return int(x - 'A');}
 char int026_to_chaz(int x) {return char(x + 'a');}
 char int026_to_chAZ(int x) {return char(x + 'A');}
-lli mod(lli a, lli b) {return a%b;}
+int mod(int a, int b) {return (a % b + b) % b;}
 bool float64_eq(double f1, double f2) {return abs(f1 - f2) < 1e-6;}
 bool float64_gt_or_eq(double f1, double f2) {return float64_eq(f1, f2) || f1 > f2;}
 bool float64_lt_or_eq(double f1, double f2) {return float64_eq(f1, f2) || f1 < f2;}
@@ -95,67 +105,68 @@ typedef unsigned long int uint32;
 typedef long long int int64;
 typedef unsigned long long int uint64;
 
+
 class BMSet {
 public:
-    v(ulli) masks;
+    v(ull) masks;
     bool zero;
 
-    BMSet(bool zero, v(ulli) &masks) {
+    BMSet(bool zero, v(ull) &masks) {
         this->zero = zero;
         this->masks = masks;
     }
 
-    BMSet(ulli size) {
-        ulli c = size / 64;
+    BMSet(ull size) {
+        ull c = size / 64;
         if (size % 64 != 0) {
             c++;
         }
         masks.resize(c);
     }
 
-    void set(lli i) {
+    void set(ll i) {
         if (i == 0) {
             zero = true;
             return;
         }
-        p(ulli, ulli) pp = loc(i);
+        p(ull, ull) pp = loc(i);
         masks[pp.first] = masks[pp.first] | pp.second;
     }
 
-    bool get(lli i) {
+    bool get(ll i) {
         if (i == 0) {
             return zero;
         }
-        p(ulli, ulli) pp = loc(i);
+        p(ull, ull) pp = loc(i);
         return (masks[pp.first] & pp.second) != 0;
     }
 
-    void del(lli i) {
+    void del(ll i) {
         if (i == 0) {
             zero = false;
             return;
         }
-        p(ulli, ulli) pp = loc(i);
+        p(ull, ull) pp = loc(i);
         masks[pp.first] = masks[pp.first] & (~pp.second);
     }
 
-    p(ulli, ulli) loc(lli i) {
-        ulli bn = i / 64;
+    p(ull, ull) loc(ll i) {
+        ull bn = i / 64;
         if (i % 64 != 0) {
             bn++;
         }
         if (bn > 0) {
             bn--;
         }
-        return mpp(bn, (ulli)((ulli)1<<(i % 64)));
+        return mpp(bn, (ull)((ull)1<<(i % 64)));
     }
 
     BMSet intersect(BMSet *oth) {
-        ulli le = oth->masks.size();
+        ull le = oth->masks.size();
         if (masks.size() > le) {
             le = masks.size();
         }
-        v(ulli) newMasks(le, 0);
+        v(ull) newMasks(le, 0);
         f(i,0,le){
             if (i < masks.size() && i < oth->masks.size()) {
                 newMasks[i] = masks[i] | oth->masks[i];
@@ -172,11 +183,11 @@ public:
     }
 
     BMSet unio(BMSet *oth) {
-        lli le = oth->masks.size();
+        ll le = oth->masks.size();
         if (masks.size() < le) {
             le = masks.size();
         }
-        v(ulli) newMasks(le, 0);
+        v(ull) newMasks(le, 0);
         f(i,0,le){
             newMasks[i] = masks[i] & oth->masks[i];
         }
