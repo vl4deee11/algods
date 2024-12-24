@@ -21,8 +21,6 @@
 #include <queue>
 #include <cstdlib>
 #include <cstring>
-#include <bitset>
-#include <unordered_set>
 
 using namespace std;
 #pragma GCC optimize("O3,unroll-loops")
@@ -32,9 +30,7 @@ using namespace std;
 #define xf first
 #define xs second
 #define ll long long int
-#define ul unsigned long long int
-#define lli int64_t
-#define ulli uint64_t
+#define ull uint64_t
 #define dbl double
 #define ldbl long double
 #define str string
@@ -54,10 +50,9 @@ using namespace std;
 #define st(t) stack<t>
 #define ar(t,sz) array<t,sz>
 #define s(t) set<t>
-#define us(t) unordered_set<t>
 #define ss(a) sort(a.begin(),a.end())
 #define ms(t) multiset<t>
-#define mipq(t) priority_queue<t,v(t),greater<t>>
+#define mipq(t) priority_queue<t>
 #define mapq(t) priority_queue<t,v(t),less<t>>
 #define trpl(a,b,c) tuple<a,b,c>
 #define m(t, t2) map<t, t2>
@@ -83,17 +78,13 @@ void print_v(vector<T> &v) { cout << "{"; for (auto x : v) cout << x << ","; cou
 #define MOD 1000000007
 #define PI 3.1415926535897932384626433832795
 #define read(type) readInt<type>()
-//ll min(ll a,int b) { if (a<b) return a; return b; }
-//ll min(int a,ll b) { if (a<b) return a; return b; }
-lli min(lli a,lli b) { if (a<b) return a; return b; }
-//ll max(ll a,int b) { if (a>b) return a; return b; }
-//ll max(int a,ll b) { if (a>b) return a; return b; }
-lli max(lli a,lli b) { if (a>b) return a; return b; }
+ll min(ll a,ll b) { if (a<b) return a; return b; }
+ll max(ll a,ll b) { if (a>b) return a; return b; }
 int chaz_to_int026(char x) {return int(x - 'a');}
 int chAZ_to_int026(char x) {return int(x - 'A');}
 char int026_to_chaz(int x) {return char(x + 'a');}
 char int026_to_chAZ(int x) {return char(x + 'A');}
-ll modf(ll a, ll b) {return (a % b + b) % b;}
+int mod(int a, int b) {return (a % b + b) % b;}
 bool float64_eq(double f1, double f2) {return abs(f1 - f2) < 1e-6;}
 bool float64_gt_or_eq(double f1, double f2) {return float64_eq(f1, f2) || f1 > f2;}
 bool float64_lt_or_eq(double f1, double f2) {return float64_eq(f1, f2) || f1 < f2;}
@@ -114,17 +105,22 @@ typedef unsigned long int uint32;
 typedef long long int int64;
 typedef unsigned long long int uint64;
 
-ll fa3,la3,s;
-// g++ -std=c++20 -O2 -lm -o x.bin main.cpp && chmod +x ./x.bin | cat i.txt | ./x.bin > o.txt
-int main() {
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int t=1;
-    int xt=1;
-    scanf("%d",&t);
-    wl(1){
-        scanf("%d",&);
+ll MAX=100001;
 
-        --t;
+// https://en.wikipedia.org/wiki/Euler%27s_totient_function
+v(ll) totientSieve(ll max){
+    v(ll) phi(max, 0);
+    phi[1] = 1;
+    f(i,2,max){
+        if(!phi[i]){
+            phi[i] = i-1;
+            fc(j,(i<<1),max,i){
+                if(!phi[j]){
+                    phi[j]=j;
+                }
+                phi[j]=(phi[j]/i)*(i-1);
+            }
+        }
     }
-    return 0;
+    return phi;
 }

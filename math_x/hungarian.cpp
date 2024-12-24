@@ -22,7 +22,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <bitset>
-#include <unordered_set>
 
 using namespace std;
 #pragma GCC optimize("O3,unroll-loops")
@@ -54,7 +53,6 @@ using namespace std;
 #define st(t) stack<t>
 #define ar(t,sz) array<t,sz>
 #define s(t) set<t>
-#define us(t) unordered_set<t>
 #define ss(a) sort(a.begin(),a.end())
 #define ms(t) multiset<t>
 #define mipq(t) priority_queue<t,v(t),greater<t>>
@@ -93,7 +91,7 @@ int chaz_to_int026(char x) {return int(x - 'a');}
 int chAZ_to_int026(char x) {return int(x - 'A');}
 char int026_to_chaz(int x) {return char(x + 'a');}
 char int026_to_chAZ(int x) {return char(x + 'A');}
-ll modf(ll a, ll b) {return (a % b + b) % b;}
+int mod(int a, int b) {return (a % b + b) % b;}
 bool float64_eq(double f1, double f2) {return abs(f1 - f2) < 1e-6;}
 bool float64_gt_or_eq(double f1, double f2) {return float64_eq(f1, f2) || f1 > f2;}
 bool float64_lt_or_eq(double f1, double f2) {return float64_eq(f1, f2) || f1 < f2;}
@@ -107,24 +105,126 @@ string to_upper(string a) { for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a
 string to_lower(string a) { for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A'; return a; }
 bool prime(ll a) { if (a==1) return 0; for (int i=2;i<=round(sqrt(a));++i) if (a%i==0) return 0; return 1; }
 vector<string> split(const string& s, char delimiter){vector<string> tokens;string token;istringstream tokenStream(s);wl(std::getline(tokenStream, token, delimiter)){tokens.push_back(token);};return tokens;}
+ll mod_exp(ll b,ll e,ll mod){ll r=1;b=b%mod;wl(e>0){if(e%2==1){r=(r*b)%mod;};e/=2;b=(b*b)%mod;}return r;}
 
-/*  All Required define Pre-Processors and typedef Constants */
-typedef long int int32;
-typedef unsigned long int uint32;
-typedef long long int int64;
-typedef unsigned long long int uint64;
 
-ll fa3,la3,s;
-// g++ -std=c++20 -O2 -lm -o x.bin main.cpp && chmod +x ./x.bin | cat i.txt | ./x.bin > o.txt
-int main() {
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int t=1;
-    int xt=1;
-    scanf("%d",&t);
-    wl(1){
-        scanf("%d",&);
+template <typename T>
+struct hungarian {  // km
+    int n;
+    vector<int> matchx;
+    vector<int> matchy;
+    vector<int> pre;
+    vector<bool> visx;
+    vector<bool> visy;
+    vector<T> lx;
+    vector<T> ly;
+    vector<vector<T> > g;
+    vector<T> slack;
+    T inf;
+    T res;
+    queue<int> q;
+    int org_n;
+    int org_m;
 
-        --t;
+    hungarian(int _n, int _m) {
+        org_n = _n;
+        org_m = _m;
+        n = max(_n, _m);
+        inf = numeric_limits<T>::max();
+        res = 0;
+        g = vector<vector<T> >(n, vector<T>(n));
+        matchx = vector<int>(n, -1);
+        matchy = vector<int>(n, -1);
+        pre = vector<int>(n);
+        visx = vector<bool>(n);
+        visy = vector<bool>(n);
+        lx = vector<T>(n, -inf);
+        ly = vector<T>(n);
+        slack = vector<T>(n);
     }
-    return 0;
-}
+
+    void addEdge(int u, int v, ll w) {
+        g[u][v] = max(w, 0);
+    }
+
+    bool check(int v) {
+        visy[v] = true;
+        if (matchy[v] != -1) {
+            q.push(matchy[v]);
+            visx[matchy[v]] = true;  // in S
+            return false;
+        }
+
+        while (v != -1) {
+            matchy[v] = pre[v];
+            swap(v, matchx[pre[v]]);
+        }
+        return true;
+    }
+
+    void bfs(int i) {
+        while (!q.empty()) {
+            q.pop();
+        }
+        q.push(i);
+        visx[i] = true;
+        while (true) {
+            while (!q.empty()) {
+                int u = q.front();
+                q.pop();
+                for (int v = 0; v < n; v++) {
+                    if (!visy[v]) {
+                        T delta = lx[u] + ly[v] - g[u][v];
+                        if (slack[v] >= delta) {
+                            pre[v] = u;
+                            if (delta) {
+                                slack[v] = delta;
+                            } else if (check(v)) {
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            T a = inf;
+            for (int j = 0; j < n; j++) {
+                if (!visy[j]) {
+                    a = min(a, slack[j]);
+                }
+            }
+            for (int j = 0; j < n; j++) {
+                if (visx[j]) {  // S
+                    lx[j] -= a;
+                }
+                if (visy[j]) {  // T
+                    ly[j] += a;
+                } else {  // T'
+                    slack[j] -= a;
+                }
+            }
+            for (int j = 0; j < n; j++) {
+                if (!visy[j] && slack[j] == 0 && check(j)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    int solve() {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                lx[i] = max(lx[i], g[i][j]);
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            fill(slack.begin(), slack.end(), inf);
+            fill(visx.begin(), visx.end(), false);
+            fill(visy.begin(), visy.end(), false);
+            bfs(i);
+        }
+
+        return res;
+    }
+};
