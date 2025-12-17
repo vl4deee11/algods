@@ -105,49 +105,54 @@ typedef unsigned long int uint32;
 typedef long long int int64;
 typedef unsigned long long int uint64;
 
-struct ST {
-    int n;
-    vector<int> t, lz;
+class ST {
+private:
+    ll n;
+    v(ll) t, lz;
 
-    ST(int n = 0) : n(n), t(4*n), lz(4*n, -1) {}
-
-    void app(int v, int l, int r, int x) {
+    void app(ll v, ll l, ll r, ll x) {
         t[v] = (r - l + 1) * x;
         lz[v] = x;
     }
 
-    void push(int v, int l, int r) {
+    void push(ll v, ll l, ll r) {
         if (lz[v] == -1 || l == r) return;
-        int m = (l + r) >> 1;
+        ll m = mid(l, r);
         app(v<<1, l, m, lz[v]);
         app(v<<1|1, m+1, r, lz[v]);
         lz[v] = -1;
     }
 
-    void upd(int v, int l, int r, int ql, int qr, int x) {
+    void pull(ll v) {
+        t[v] = t[v<<1] + t[v<<1|1];
+    }
+
+public:
+    ST(ll _n=0) {
+        n = _n;
+        t.assign(4*n+5, 0);
+        lz.assign(4*n+5, -1);
+    }
+
+    void upd(ll v, ll l, ll r, ll ql, ll qr, ll x) {
         if (ql > r || qr < l) return;
         if (ql <= l && r <= qr) {
             app(v, l, r, x);
             return;
         }
         push(v, l, r);
-        int m = (l + r) >> 1;
+        ll m = mid(l, r);
         upd(v<<1, l, m, ql, qr, x);
         upd(v<<1|1, m+1, r, ql, qr, x);
-        t[v] = t[v<<1] + t[v<<1|1];
+        pull(v);
     }
 
-    int sum() {
-        return t[1];
-    }
-
-    int findk(int v, int l, int r, int k) {
-        if (l == r) return l;
+    ll sum(ll v, ll l, ll r, ll ql, ll qr) {
+        if (ql > r || qr < l) return 0;
+        if (ql <= l && r <= qr) return t[v];
         push(v, l, r);
-        int m = (l + r) >> 1;
-        if (t[v<<1] >= k)
-            return findk(v<<1, l, m, k);
-        else
-            return findk(v<<1|1, m+1, r, k - t[v<<1]);
+        ll m = mid(l, r);
+        return sum(v<<1, l, m, ql, qr) +
+               sum(v<<1|1, m+1, r, ql, qr);
     }
 };
